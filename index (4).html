@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EVW Build Tracker</title>
+<link rel="icon" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAc8UlEQVR4nO3dyXNVV54n8J8kJjPj2U6nbYzNjAR25eS0jXNRi+pNLroiqhed64xeda77D+h1bnNVFZHRq45eZFQtMgIwHjKdaRASYsaAwWAbMxkQk4TQUy8qUVoIgYb33jn3ns9naeOn77tgft977rn3dgRZ6fnVL8dSZwBolYHf/6EjdQb+k9+INjPgAaamILSPA91Chj3A3CkFreGgNpGBD9B6CkFzOIhzYOADpKcQzI6DNkOGPkC+lIHpc6CmwdAHqB5l4NEcnEcw+AGqTxF4OAflAYY+QH0pA3/nQPyNwQ9QDkVAATD4AQpWchEo9osb/ADcV2IRKO4LG/wATKWkIlDMFzX4AZiuEopA7b+gwQ/AbNW5CNT2ixn8ADRLHYtAZ+oArWD4A9BMdZwrtWo0dfwNAiAvdVkNqMWXMPgBaLeqF4HKXwIw/AFIoerzp9IFoOoHH4Bqq/IcquTyRZUPOAD1VLVLApVbATD8AchR1eZTpQpA1Q4uAGWp0pyqxHJFlQ4oAETkf0kg+xUAwx+AKsp9fmVdAHI/eADwKDnPsWwLQM4HDQCmK9d5lmUByPVgAcBs5DjXsisAOR4kAJir3OZbNjsUczswANAqOdwhkMUKgOEPQElymHvJC0AOBwEA2i31/EtaAFJ/eQBIKeUcTFYADH8ASDcPk18CAADaL0kBcPYPAH+XYi62vQAY/gAwWbvnY1sLgOEPAFNr55xsWwEw/AHg8do1L9tSAAx/AJi+dszNlhcAwx8AZq7V89NtgABQoJYWAGf/ADB7rZyjLSsAhj8AzF2r5mlLCoDhDwDN04q5ag8AABSo6QXA2T8ANF+z52tTC4DhDwCt08w527QCYPgDQOs1a97aAwAABWpKAXD2DwDt04y5awUAAAo05wLg7B8A2m+u83dOBcDwB4B05jKHXQIAgALNugA4+weA9GY7j60AAECBZlUAnP0DQD5mM5etAABAgWZcAJz9A0B+ZjqfrQAAQIFmVACc/QNAvmYyp60AAECBpl0AnP0DQP6mO6+tAABAgaZVAJz9A0B1TGduWwEAgAI9tgA4+weA6nnc/LYCAAAFUgAAoECPLACW/wGguh41x60AAECBpiwAzv4BoPqmmudWAACgQAoAABTooQXA8j8A1MfD5roVAAAokAIAAAWaVAAs/wNA/Tw4360AAECBFAAAKJACAAAFmlAAXP8HgPr6/py3AgAABVIAAKBACgAAFGi8ALj+DwD1d3/eWwEAgAIpAABQIAUAAAqkAABAgToibAAEgNJYAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoECdngEAAOWxAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABVIAAKBACgAAFGhe6gDk7aPf/i51hCL82x//I/71j/8+rV/b1dkZ//0f/0t0dnS0ONXM/eHTj+K7wcHUMbL2i23/EK8+90LqGJPs6t8bZy98mzoGbaQAQMWMNhrx1tr10bPmjdRRJrl553b83492pY6Rrc7Ozvif//W/xaqly1JHmeDe6Gj8v48/SB2DNnMJACpo5749qSM81Patb6WOkLWeNW9kN/wjIvYcOxyDt2+ljkGbKQBQQR/u3xcjo/dSx5hk86uvxVPLV6SOka1fZFqQdvR+ljoCCSgAUEGDt2/FnqOHU8eYpKOjI7b3vJk6RpY6Ozri3S3bUseY5PbwUPz50EDqGCSgAEBF7cj1MoAC8FDda96IJ5cvTx1jkk8O7I/hkZHUMUhAAYCK+vTQQNweHkodY5LuTK9zp5ZrMcp1PwmtpwBARQ2PjMQnB/anjjFJZ0dHvNeT31J3Sh0dHfFed37H5OqNwej9/GjqGCSiAECF7diX5+at7T15bnZLZfPqNfH0ipWpY0zyQX9vNBqN1DFIRAGACtv3+bG4eiO/B+9sfX1trFiyNHWMbNj9T44UAKiwRqMRu/r2po4xSVdnZ7y7ZWvqGFnIdfn/m8uX4ujZM6ljkJACABWX6yau7Vvz3PTWbptefS2eWbkqdYxJcr18RPsoAFBxR8+eia8uXUwdY5I331gfyxYvTh0jObv/yZUCADWQ41/m87q64p3NW1PHSC7HAnD83Jdx9uKF1DFITAGAGsh1Obf0ywAbX1kdz616MnWMSXIsjLSfAgA18NWli3H83JepY0zyD+s2xJJFi1LHSOb9DHf/N8bGstw4SvspAFATOd7SNb9rXvx8c0/qGMnkuPzff+JYXBm8njoGGVAAoCZ29e/N8qEupT4UaN0PX4nnn3wqdYxJcn2HBO2nAEBNfDc4GH0njqeOMcmP12+MJxYuTB2j7XJ8+M/dkZH4eKAvdQwyoQBAjeS4uWvB/Pnx9qbu1DHaLsfl/0+PHIxbQ/m9QIo0FACokY8P9MXdDF/tmuMwbKW1L70cLz79TOoYk+zMcJ8I6SgAUCO3hobi08MHUseY5CcbNseiBQtSx2ibHG9/vHnndvz1yKHUMciIAgA1k+MzARYtWBA/3bA5dYy2eT/DjY8fDvTFyOi91DHIiAIANfPZkcNx4/bt1DEm2Z7hprhWeP0HL8VLzzybOsYkOd4mSloKANTMyOi9+GhgX+oYk/xs45ZYMH9+6hgtl+PDfy5duxoHTp1IHYPMKABQQzne6/3EwoXxk/WbUsdouRyfe7Crb280xsZSxyAzCgDU0MCpE3Hx2tXUMSbJcXNcM732wg/i5WefSx1jkhwLIekpAFBDY2NjsSvDv/Tf3tQT87vmpY7RMu9nWHDOfHs+Tn59LnUMMqQAQE3t7MuvACxZtCh+tH5j6hgtk+P1/xzvCiEP9a3i1NL23/w6dYTKOPn1V3H6229i9fMvpo4ywfaeN7N8VsFcvfr8C/HKcy+kjjGJN/8xFSsAUGM7e/NbBfj55p6Y19WVOkbT5Xj2f+j0qTh/5XLqGGRKAYAa29G3J8Yy2/29bPHieHPt+tQxmi7Hh//Y/MejKABQYxe+uxKHznyROsYkOQ7LuXj52edi9Qt5XWoZbTRid39v6hhkTAGAmsvxCXDvbtkaXZ31+esnx+X/vceOxPVbN1PHIGP1+T8QeKjd+3vj3uho6hgTLF+yJLa+vi51jKbJsQDY/c/jKABQc4O3bsWeY4dTx5gkx3vmZ+OlZ56NNS++lDrGBEN3h+NPBwdSxyBzCgAUYGeGm8He7d4WnR0dqWPMWY5n/386OBBDd4dTxyBzCgAU4M+HBuLOcF4DYdXSZdG95o3UMeYsxw2Nlv+ZDgUACjB09258cnB/6hiT5Hj2PBMvPvV0vPHSD1PHmOD6rZux99iR1DGoAAUACpHjWeF73duio8KXAXIsMB/098Zoo5E6BhWgAEAh9h0/Gldv3kgdY4Knlq+IzavXpI4xazkWgBz3e5AnBQAKkeuDYd7vqebdAM8/+VSs++ErqWNMcP7K5Th0+lTqGFSEAgAFyfHRsNt73qzkZYBf5Hj2n+EbIMmXAgAFOXLmi/jm8qXUMSZ4ZuWq2PDK6tQxZmx7jgUgw4JHvhQAKEyOqwBVuwzw3KonY8PLr6aOMcHJr8/FmW/Pp45BhSgAUJidGd4NsL1iBSDHvDkWO/KmAEBhzl68EJ9/dTZ1jAly3FD3KLnt/m+MjcWuvr2pY1AxCgAUKMc3BOY2VKfyzMpVsTGzPQsDJz+PS9eupo5BxSgAUKAP+nujMTaWOsYEVdkHkONdCzb/MRsKABTo8vVrsf/k8dQxJnjx6Wfi9R/k9Vjdh8ltpWLk3r34cKAvdQwqSAGAQu3oze+sMfdXBD+9YmVsfvW11DEm+OuRg3Hzzu3UMaggBQAK9dFAX9wdGUkdY4LtGb5Z7/ve68nv3QV2/zNbCgAU6tbQnfjLkYOpY0zw8rPPxeoXXkwdY0q5vfr31tBQdr+HVIcCAAXLcfNYbkP2vieXL48tr72eOsYEH2e4ikN1KABQsL9keP14e6b7AN7rfjM6s1v+z+92TqpDAYCCjdy7Fx8N9KeOMcHq51+Ml597PnWMSXJ7+c+VwevRfyKvOzmoFgUACpfjWWRuzwRYtXRZdGe2/L+rb292z3KgWhQAKNzAyc/j8vVrqWNMkNvdAO/1bIvOzrz+usxx/wbVktefaKDtcnyO/Os/eCl+8PSzqWOMy62QnL14IY6f+zJ1DCpuXuoAMBMf/fZ3qSPMyfbf/Dp1hIfase+z+Jdf/GPqGBO8v/XN+D87/5g6RqxYsjS2vb42dYwJnP3TDFYAgDjx1bn48kJe75LP5ZW773Zb/qee8vpTDSST26OB1/3wlXjhqadTx8hu9/+RL0/H15cvpo5BDSgAQERE7OzLqwBEpL8bYPniJbHtjXVJMzwox7s2qCYFAIiIiPNXLsfhM1+kjjHB9sRn3+92b42ujJb/G41G7O7rTR2DmsjnTzaQ3I7evM4u1//wlXh25apkPz+3xxL3fn40rt68kToGNaEAAON2798Xo41G6hjjOjo64v1EqwDLFi+ON9euT/Kzp+LNfzSTAgCMu3bzRvQeP5I6xgSp7gZ4Z/PWmNfVleRnP8zwyEh8ciCvxzZTbQoAMEFudwNsevW1eHrFyrb/3FQrD1P586GBuDM8nDoGNaIAABN8cnB/DN3NZ9B0dHTEez3b2vozlyx6It5al9nyf2b7M6g+BQCYYOjucPzp4EDqGBO0ezPeO1t6Yn5XPg9KHbx9K/YcO5w6BjWjAACT5Hav+ZbXXo9Vy5a37efltvy/u39f3BsdTR2DmlEAgEn2HjsS12/dTB1jXGdHR7zX3Z7LAEsWLYofrdvYlp81XR79SysoAMAko41G7O7P64Ez729tz90Ab2/qifnz8ln+v3D1uzh4+mTqGNSQAgA8VG73nG9dszZWLFna8p+T2/L/zn17YmxsLHUMakgBAB7q0OlTcf7K5dQxxnV2dsa7Lb4M8MTChfHj9Zb/KYMCAExpV9/e1BEmaPXLgd7e1B0L5s9v6c+YiS/Ofx1fnP86dQxqSgEAppTb3QBvrl0fyxcvadnn57b8795/WkkBAKZ05tvzcfLrc6ljjOvq7Iyfb+lpyWcvWrAwfrx+U0s+ezbGxsayW4GhXhQA4JFy2wzYqocC/WzTlli0YEFLPns2DnxxMi5c/S51DGpMAQAeaee+PdHIaBf6W+vWx5JFTzT9c1u9v2CmbP6j1RQA4JEuX78WB06dSB1j3PyueU2/DLBw/vz46cbNTf3Mubg3Ohof7t+XOgY1pwAAj5XbZrRmn63/dOOWWLRgYVM/cy4+O3ooBm/fSh2DmlMAgMf6cKAvRu7dSx1j3I/WbYzFCxc17fNy2/1v+Z92UACAx7p553b89eih1DHGLZg/P362aUvzPmtjcz6rGW4PD8WfD+X1NkbqSQEApmVnbpcBmnTW/pMNm+OJhfks/39yYH8Mj4ykjkEBFABgWj49cjBuDd1JHWPcTzZsbsp1+9x2/+f28CXqSwEApuXuyEh8PNCfOsa4Zuzcnz9vXry9ubtJiebu6o3B2Pf5sdQxKEQ+77yEadj+m1+njlC0Hfs+i3/6ydupY4x7v+fNOd0u9+P1m5q6mXCuPujvjUajkToGhbACAExb/4njcWXweuoY4362aUssnMPLe3Lb/Z/b7ZbUmwIATFsjs+fTL1qwMH68YXaXAeZ3zYufZ7T8//Xli3H07JnUMSiIAgDMSG73qM92E9+P1m9sySOFZyu340r9KQDAjBw/92WcvXghdYxxP9vUHfPnzXw70/bMdv8rALSbAgDMWE7DasmiRfGjdRtn9N/M6+qKd1r0WuHZyK1UUQYFAJix3O5Vn+lmvrfWboilTyxuUZqZs/mPFBQAYMa+uXwpjnx5OnWMcT/f3B3zurqm/et/kdHu/8bYWHzQ35s6BgVSAIBZyWkVYOkTi+OttRum9Wu7Ojub/jrhueg/cSyrWysphwIAzMruvrweWvP+1ult6ntr7YZYvnhJi9NM347efPZTUBYFAJiVqzdvRO/nR1PHGPfO5q3R1fn4v9K2T7MotMPdkZH4+EBf6hgUSgEAZm1HRncDLF+yJLa9se6Rv6azszPe3bK1PYGm4T9fsDSUOgaFUgCAWfvkQH8M3b2bOsa493sevblv2+vrYsWSpW1K83i5vWKZsigAwKzdGR6OTw8fSB1j3LvdW6PzEZcBctr9f/PO7fjrkUOpY1AwBQCYk5zuYV+5dFn0rHnjof+us7Mz3une2t5Aj/Dh/n0xMnovdQwKpgAAc7Ln2OEYvHUrdYxxU70bYOuatbFq6bI2p5laTvsnKJMCAMzJvdHR2L1/X+oY497t3hadHR2T/vl0bxNsh0vXrsaBUydSx6BwCgAwZzk9FOip5Sti8+rXJ/yzzo6OeK97W6JEk+3s2xuNsbHUMSicAgDM2aHTp+LCd1dSxxj34Nl+95o3YtWy5YnSTJbTy5QolwIAzNnY2Fjs7NubOsa497q3Rcf3LgPk9OrfM9+ej5Nfn0sdAxQAoDlyugzwzMpVsfGV1RER0ZHZ8n9Ox4myKQBAU5w+/02c+uar1DHG3X9F8ObVa+LpFSvThvmbsbExy/9kQwEAmian4bb9b2f9OT385/CZL+LbjPZKUDYFAGianfv2xFgmu9ufe/Kp2PDyq5kt/+dTkEABAJrm4rWrceCLk6ljjPsfv/zneGblqtQxIiJitNGI3f29qWPAOAUAaKqcNrlN9VjgFPYcOxzXb91MHQPGKQBAU3nG/cPltD8CIhQAoMlu3L4de44eTh0jK0N3h+NPBwdSx4AJFACg6Wx2m+iTg/tj6O5w6hgwgQIANN2nhwbi9vBQ6hjZ2NGrEJEfBQBouuGRkfh4oD91jCxcu3kjeo8fSR0DJlEAgJbY2eesNyJi9/59MdpopI4Bk8xLHQBm4qPf/i51hJb4tz/+R/zrH/89dYym2vf5sfhucDCeXJ7PW/hS2NGbz22R8H1WAICWaDQa8UF/Pm8ITOH8lctx+MwXqWPAQykAQMuUfjeAyyDkTAEAWubY2TPx1aWLqWMkY/c/OVMAgJYq9Ql4J746F19eOJ86BkxJAQBaKqd3A7RTqd+b6lAAgJb66tLFOHb2TOoYbdUYG4tdfWVvgCR/CgDQcqVdBhg4+Xlcvn4tdQx4JAUAaLld/XujUdDDcCz/UwUKANBy3w0ORt+J46ljtMXIvXvxkccgUwEKANAWpZwV//XIwbh553bqGPBYCgDQFh8P9MfdkZHUMVqu9IcfUR0KANAWt4eH4tPDB1LHaKlbQ3fiL0cOpo4B06IAAG1T98sApaxyUA8KANA2nx05HDdu1/f6eN0LDvWiAABtMzJ6Lz7cvy91jJa4Mng9+gu504F6UACAtqrrG/J29e2NxthY6hgwbQoA0FYDp07ExWtXU8doutKedkj1KQBAW42NjcWumg3LsxcvxPFzX6aOATOiAABtV7d75Xfa/EcFKQBA25365qs4/e03qWM0Td0KDWVQAIAkdvbWY2ge+fJ0fHP5UuoYMGMKAJDEjr49MVaDXfPu/aeqFAAgiQvfXYlDp0+ljjEnjUYjdvf1po4Bs6IAAMlU/dp57/GjcfXmjdQxYFYUACCZ3ft7497oaOoYs7ajpg81ogwKAJDM4K1bsefY4dQxZmV4ZCQ+OdCfOgbMmgIAJFXVJ+j96eD+uDM8nDoGzJoCACT150MDlRykVS0ucF9Hz69+Wf37cACAGbECAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUaN7/vnEmdQYAoM2sAABAgRQAACiQAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAo0Lz/tezV1BkAgDazAgAABVIAAKBACgAAFEgBAIACKQAAUCAFAAAKpAAAQIEUAAAokAIAAAVSAACgQAoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAFUgAAoEAKAAAUSAEAgAIpAABQIAUAAAqkAABAgRQAACiQAgAABeoc+P0fOlKHAADaywoAABRIAQCAAikAAFAgBQAACqQAAECBFAAAKJACAAAF6oyI8CwAACjHwO//0GEFAAAKpAAAQIEUAAAokAIAAAUaLwA2AgJA/d2f91YAAKBACgAAFEgBAIACTSgA9gEAQH19f85bAQCAAikAAFAgBQAACjSpANgHAAD18+B8twIAAAVSAACgQA8tAC4DAEB9PGyuWwEAgAIpAABQoCkLgMsAAFB9U81zKwAAUKBHFgCrAABQXY+a41YAAKBACgAAFOixBcBlAAConsfNbysAAFCgaRUAqwAAUB3TmdtWAACgQNMuAFYBACB/053XVgAAoEAzKgBWAQAgXzOZ01YAAKBAMy4AVgEAID8znc9WAACgQLMqAFYBACAfs5nLVgAAoECzLgBWAQAgvdnOYysAAFCgORUAqwAAkM5c5vCcVwCUAABov7nOX5cAAKBATSkAVgEAoH2aMXetAABAgZpWAKwCAEDrNWveNnUFQAkAgNZp5pxt+iUAJQAAmq/Z89UeAAAoUEsKgFUAAGieVszVlq0AKAEAMHetmqctvQSgBADA7LVyjtoDAAAFankBsAoAADPX6vnZlhUAJQAApq8dc7NtlwCUAAB4vHbNy7buAVACAGBq7ZyTbd8EqAQAwGTtno9J7gJQAgDg71LMRbcBAkCBkhUAqwAAkG4eJl0BUAIAKFnKOZj8EoASAECJUs+/5AUgIv1BAIB2ymHuJQ/woJ5f/XIsdQYAaIUcBv99WawAfF9OBwcAmiW3+ZZdAYjI7yABwFzkONeyLAAReR4sAJipXOdZtgUgIt+DBgDTkfMcy7oAROR98ABgKrnPr6zDPcgdAgDkLvfBf1/2KwDfV5WDCkCZqjSnKlUAIqp1cAEoR9XmU6XCPsglAQBSq9rgv69yKwDfV9WDDkA9VHkOVboARFT74ANQXVWfP5UO/yCXBABotaoP/vtq8SUepAgA0Gx1Gfz3Vf4SwMPU7TcJgLTqOFdq94UeZDUAgNmq4+C/r7Zf7EGKAADTVefBf1/tv+CDFAEAplLC4L+vmC/6IEUAgPtKGvz3FfeFH6QIAJSrxMF/X7Ff/EGKAEA5Sh789xV/AB6kCADUl8H/dw7EIygDANVn6D+cgzINigBA9Rj8j+bgzJAyAJAvQ3/6HKg5UAYA0jP0Z8dBayKFAKD1DPzmcBBbSCEAmDsDvzUc1DZTCgCmZti3z/8Hj9B2xDnpXpIAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+<meta name="apple-mobile-web-app-title" content="EVW Tracker">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2f5d4f">
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --surface: #ffffff;
+    --surface-2: #f0ede8;
+    --border: #ddd7cf;
+    --text: #23201b;
+    --text-dim: #6b6459;
+    --accent: #b5502f;
+    --accent-2: #2f5d4f;
+    --accent-soft: #f0ded4;
+    --good: #2f7a4f;
+    --warn: #b8862e;
+    --bad: #b5502f;
+    --shadow: 0 1px 3px rgba(30,25,15,0.08), 0 1px 2px rgba(30,25,15,0.06);
+    --radius: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16140f;
+      --surface: #211e18;
+      --surface-2: #2a251d;
+      --border: #3a352b;
+      --text: #f0ece3;
+      --text-dim: #a39c8d;
+      --accent: #e0774f;
+      --accent-2: #6fb497;
+      --accent-soft: #3a2a20;
+      --good: #6fbf8e;
+      --warn: #e0ad55;
+      --bad: #e0774f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16140f;
+    --surface: #211e18;
+    --surface-2: #2a251d;
+    --border: #3a352b;
+    --text: #f0ece3;
+    --text-dim: #a39c8d;
+    --accent: #e0774f;
+    --accent-2: #6fb497;
+    --accent-soft: #3a2a20;
+    --good: #6fbf8e;
+    --warn: #e0ad55;
+    --bad: #e0774f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px 60px; }
+  header { margin-bottom: 18px; }
+  header h1 { font-size: 1.4rem; margin: 0 0 2px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--text-dim); font-size: 0.9rem; }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    padding-bottom: 0;
+  }
+  nav.tabs button {
+    background: none;
+    border: none;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  nav.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .card h2 { font-size: 1rem; margin: 0 0 12px; }
+  .card h3 { font-size: 0.88rem; margin: 14px 0 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.03em; }
+
+  label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 3px; margin-top: 10px; }
+  label:first-child { margin-top: 0; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 120px; }
+
+  button.btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  button.btn:hover { filter: brightness(1.08); }
+  button.btn.secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  button.btn.tiny { padding: 4px 9px; font-size: 0.76rem; margin-top: 0; }
+  button.btn.danger { background: var(--bad); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-dim); font-weight: 600; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.02em; }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-top: 6px; }
+  .stat { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+  .stat .label { font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.02em; }
+  .stat .value { font-size: 1.25rem; font-weight: 700; margin-top: 2px; }
+  .stat .value.good { color: var(--good); }
+  .stat .value.warn { color: var(--warn); }
+  .stat .value.bad { color: var(--bad); }
+
+  .list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .list-item:last-child { border-bottom: none; }
+  .muted { color: var(--text-dim); font-size: 0.82rem; }
+  .empty { color: var(--text-dim); font-size: 0.86rem; padding: 10px 0; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .chip {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-size: 0.76rem;
+    cursor: pointer;
+  }
+  .chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .savebar { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .savebar .muted { font-size: 0.76rem; }
+  .parts-row { display: grid; grid-template-columns: 1fr 90px 90px 32px; gap: 6px; align-items: center; margin-top: 6px; }
+  .parts-row input { padding: 6px 8px; font-size: 0.84rem; }
+  .x-btn { background: none; border: none; color: var(--text-dim); font-size: 1.1rem; cursor: pointer; line-height: 1; }
+  ::-webkit-scrollbar { height: 6px; }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="authWrap">
+  <header>
+    <h1>🚐 Elevated Vanworks — Build Tracker</h1>
+  </header>
+  <div class="card" style="max-width:360px;margin:40px auto;">
+    <h2>Sign in</h2>
+    <div class="row"><div><label>Email</label><input id="authEmail" type="email" autocomplete="username"></div></div>
+    <div class="row" style="margin-top:8px;"><div><label>Password</label><input id="authPassword" type="password" autocomplete="current-password"></div></div>
+    <div id="authError" class="muted" style="color:var(--bad);margin-top:8px;display:none;"></div>
+    <button class="btn" id="authSubmit" style="margin-top:12px;width:100%;">Sign in</button>
+  </div>
+</div>
+
+<div class="wrap" id="appWrap" style="display:none;">
+  <header>
+    <h1>🚐 Elevated Vanworks — Build Tracker</h1>
+    <p>Crew hours, van models, accessories, and margins — all in one place.</p>
+    <p class="muted" id="userBar" style="margin-top:-6px;"></p>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <div id="content"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
+    onSnapshot, query, orderBy, limit, getDocs, getDoc
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  import {
+    getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+    setPersistence, browserLocalPersistence
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB3HJatDRDN0nqYaRGrOZh8tHgY0XjHmrQ",
+    authDomain: "evw-time-tracking.firebaseapp.com",
+    projectId: "evw-time-tracking",
+    storageBucket: "evw-time-tracking.firebasestorage.app",
+    messagingSenderId: "677471513283",
+    appId: "1:677471513283:web:26bf816fa558fcdefb5076"
+  };
+  const fbApp = initializeApp(firebaseConfig);
+  const fsdb = getFirestore(fbApp);
+  const auth = getAuth(fbApp);
+
+  // TODO: put Steve's real login email here — it must exactly match the
+  // email of the user you created in Firebase Authentication. This is the
+  // only account that can see/edit hourly rates or create new vans/jobs.
+  const ADMIN_EMAILS = ["steve@elevatedvanworks.com"];
+
+  // Thin shim so every db.collection(...)/db.doc(...) call below (written
+  // originally for Claude's db capability) works unchanged against real
+  // Firestore — no need to touch the app logic itself.
+  function makeDbShim() {
+    function wrapDoc(ref) {
+      return {
+        id: ref.id,
+        set: (data) => setDoc(ref, data),
+        update: (data) => updateDoc(ref, data),
+        delete: () => deleteDoc(ref),
+        get: () => getDoc(ref).then(s => ({ id: s.id, data: s.data(), exists: s.exists() })),
+        onSnapshot: (cb, errCb) => onSnapshot(ref, s => cb({ id: s.id, data: s.data(), exists: s.exists() }), errCb || function () {})
+      };
+    }
+    function wrapCollection(name) {
+      const colRef = collection(fsdb, name);
+      let constraints = [];
+      const api = {
+        add: (data) => addDoc(colRef, data).then(ref => ({ id: ref.id })),
+        doc: (id) => wrapDoc(doc(fsdb, name, id)),
+        orderBy: (field, dir) => { constraints = constraints.concat(orderBy(field, dir === "desc" ? "desc" : "asc")); return api; },
+        limit: (n) => { constraints = constraints.concat(limit(n)); return api; },
+        onSnapshot: (cb, errCb) => {
+          const q = constraints.length ? query(colRef, ...constraints) : colRef;
+          return onSnapshot(q, snap => cb({ docs: snap.docs.map(d => ({ id: d.id, data: d.data() })) }), errCb || function () {});
+        },
+        get: () => {
+          const q = constraints.length ? query(colRef, ...constraints) : colRef;
+          return getDocs(q).then(snap => ({ docs: snap.docs.map(d => ({ id: d.id, data: d.data() })) }));
+        }
+      };
+      return api;
+    }
+    return {
+      collection: wrapCollection,
+      doc: (path) => wrapDoc(doc(fsdb, ...path.split("/")))
+    };
+  }
+
+  (function() {
+  "use strict";
+
+  const DEFAULT_CATEGORIES = ["Battery & Power", "Galley", "Electrical", "Plumbing", "Interior & Cabinetry", "Exterior & Paint", "Insulation", "General / Other", "Quoting a Job", "Answering Questions / Client Comms", "Revising Quotes", "Invoicing"];
+  const DEFAULT_CREW = [
+    { name: "Sarah Porter", rate: 40, active: true },
+    { name: "Matthew Tunstall", rate: 35, active: true },
+    { name: "Stephen Kepple", rate: 0, active: true }
+  ];
+  const DEFAULT_MODEL_NAMES = ["Echo", "Summit", "Incline", "Custom"];
+
+  let db = null;
+  let isAdmin = false;
+  let state = {
+    settings: { categories: DEFAULT_CATEGORIES, shopRate: 38 },
+    crew: [],
+    rates: {},
+    models: [],
+    accessories: [],
+    jobs: [],
+    timelogs: [],
+    invoiceRequests: []
+  };
+  let seeded = { crew: false, settings: false, migrateRates: false, models: false };
+  let activeTab = "log";
+  let unsubs = [];
+
+  function fmt$(n) {
+    n = Number(n) || 0;
+    return "$" + n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function fmtPct(n) {
+    if (!isFinite(n)) return "—";
+    return (n * 100).toFixed(1) + "%";
+  }
+  function uid() { return Math.random().toString(36).slice(2, 10); }
+
+  // ---------- DB / auth helpers ----------
+  // Only admins (Steve) can see or edit hourly rates. Rates live in their
+  // own "rates" collection, locked to admin-only read/write by a Firestore
+  // security rule (see the rules Claude gave you to paste into the Firebase
+  // console) — this is enforced server-side, not just hidden in the UI.
+  function initUser(user) {
+    isAdmin = !!(user && user.email && ADMIN_EMAILS.indexOf(user.email) !== -1);
+    if (isAdmin) migrateInlineRates();
+    render();
+  }
+
+  // One-time cleanup for crew docs created before rates were split out:
+  // strips any inline "rate" field off the crew doc and moves it into the
+  // admin-only rates collection. No-op once there's nothing left to move.
+  async function migrateInlineRates() {
+    if (!db) return;
+    try {
+      const snap = await db.collection("crew").get();
+      (snap.docs || []).forEach(d => {
+        if (d.data && Object.prototype.hasOwnProperty.call(d.data, "rate")) {
+          const rate = Number(d.data.rate) || 0;
+          const rest = Object.assign({}, d.data);
+          delete rest.rate;
+          db.doc("crew/" + d.id).set(rest).catch(() => {});
+          db.doc("rates/" + d.id).set({ rate: rate }).catch(() => {});
+        }
+      });
+    } catch (e) {}
+  }
+
+  function subscribeAll() {
+    unsubs.push(db.doc("settings/config").onSnapshot(snap => {
+      if (snap.exists) {
+        state.settings = Object.assign({ categories: DEFAULT_CATEGORIES, shopRate: 38 }, snap.data);
+        const existing = state.settings.categories || [];
+        const missing = DEFAULT_CATEGORIES.filter(c => existing.indexOf(c) === -1);
+        if (missing.length && !seeded.settings) {
+          seeded.settings = true;
+          const merged = existing.concat(missing);
+          state.settings.categories = merged;
+          db.doc("settings/config").update({ categories: merged }).catch(()=>{});
+        }
+      } else if (!seeded.settings) {
+        seeded.settings = true;
+        db.doc("settings/config").set({ categories: DEFAULT_CATEGORIES, shopRate: 38 }).catch(()=>{});
+      }
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("crew").onSnapshot(snap => {
+      const docs = snap.docs || [];
+      state.crew = docs.map(d => Object.assign({ id: d.id }, d.data));
+      if (docs.length === 0 && !seeded.crew) {
+        seeded.crew = true;
+        DEFAULT_CREW.forEach(c => {
+          db.collection("crew").add({ name: c.name, active: c.active }).then(ref => {
+            if (isAdmin) db.doc("rates/" + ref.id).set({ rate: Number(c.rate) || 0 }).catch(() => {});
+          }).catch(() => {});
+        });
+      }
+      render();
+    }, () => {}));
+
+    // Admin-only: enforced server-side by the "rates" db rule, so
+    // non-admin viewers simply never receive documents from this query.
+    unsubs.push(db.collection("rates").onSnapshot(snap => {
+      const docs = snap.docs || [];
+      const rates = {};
+      docs.forEach(d => { rates[d.id] = Number(d.data.rate) || 0; });
+      state.rates = rates;
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("models").orderBy("name").onSnapshot(snap => {
+      const docs = snap.docs || [];
+      state.models = docs.map(d => Object.assign({ id: d.id }, d.data));
+      if (docs.length === 0 && !seeded.models && isAdmin) {
+        seeded.models = true;
+        DEFAULT_MODEL_NAMES.forEach(name => {
+          db.collection("models").add({ name, parts: [], laborEst: [] }).catch(() => {});
+        });
+      }
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("accessories").orderBy("name").onSnapshot(snap => {
+      state.accessories = (snap.docs || []).map(d => Object.assign({ id: d.id }, d.data));
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("jobs").orderBy("createdAt", "desc").onSnapshot(snap => {
+      const docs = snap.docs || [];
+      state.jobs = docs.map(d => Object.assign({ id: d.id }, d.data));
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("timelogs").orderBy("createdAt", "desc").limit(500).onSnapshot(snap => {
+      state.timelogs = (snap.docs || []).map(d => Object.assign({ id: d.id }, d.data));
+      render();
+    }, () => {}));
+
+    unsubs.push(db.collection("invoiceRequests").orderBy("createdAt", "desc").onSnapshot(snap => {
+      state.invoiceRequests = (snap.docs || []).map(d => Object.assign({ id: d.id }, d.data));
+      render();
+    }, () => {}));
+  }
+
+  // ---------- Calc helpers ----------
+  function modelTotals(model) {
+    const parts = model.parts || [];
+    const cost = parts.reduce((s, p) => s + (Number(p.cost) || 0), 0);
+    const price = parts.reduce((s, p) => s + (Number(p.price) || 0), 0);
+    const laborHours = (model.laborEst || []).reduce((s, l) => s + (Number(l.hours) || 0), 0);
+    return { cost, price, margin: price - cost, marginPct: price ? (price - cost) / price : NaN, laborHours };
+  }
+
+  function jobTotals(job) {
+    const model = state.models.find(m => m.id === job.modelId);
+    const mt = model ? modelTotals(model) : { cost: 0, price: 0, laborHours: 0 };
+    let accCost = 0, accPrice = 0, accHours = 0;
+    (job.accessoryIds || []).forEach(id => {
+      const a = state.accessories.find(x => x.id === id);
+      if (a) { accCost += Number(a.cost) || 0; accPrice += Number(a.price) || 0; accHours += Number(a.hours) || 0; }
+    });
+    const cost = mt.cost + accCost;
+    const price = mt.price + accPrice;
+    const estHours = mt.laborHours + accHours;
+    const laborCost = estHours * (Number(state.settings.shopRate) || 0);
+    const totalCost = cost + laborCost;
+    const margin = price - totalCost;
+    return { partsCost: cost, price, estHours, laborCost, totalCost, margin, marginPct: price ? margin / price : NaN };
+  }
+
+  function jobActuals(jobId) {
+    const logs = state.timelogs.filter(t => t.jobId === jobId);
+    let hours = 0, cost = 0;
+    const byCat = {};
+    logs.forEach(l => {
+      const h = Number(l.hours) || 0;
+      hours += h;
+      const crew = state.crew.find(c => c.name === l.crewName);
+      const rate = crew && Object.prototype.hasOwnProperty.call(state.rates, crew.id)
+        ? (Number(state.rates[crew.id]) || 0)
+        : (Number(state.settings.shopRate) || 0);
+      cost += h * rate;
+      byCat[l.category] = (byCat[l.category] || 0) + h;
+    });
+    return { hours, cost, byCat };
+  }
+
+  // ---------- Render shell ----------
+  const TABS = [
+    { id: "log", label: "⏱ Time Log" },
+    { id: "models", label: "🚐 Van Models" },
+    { id: "accessories", label: "🔧 Accessories" },
+    { id: "estimator", label: "🧮 Job Estimator" },
+    { id: "invoices", label: "🧾 Invoice Requests" },
+    { id: "dashboard", label: "📊 Dashboard" }
+  ];
+
+  function render() {
+    const tabsEl = document.getElementById("tabs");
+    tabsEl.innerHTML = TABS.map(t =>
+      '<button data-tab="' + t.id + '" class="' + (activeTab === t.id ? "active" : "") + '">' + t.label + '</button>'
+    ).join("");
+    tabsEl.querySelectorAll("button").forEach(b => {
+      b.onclick = () => { activeTab = b.dataset.tab; render(); };
+    });
+
+    const content = document.getElementById("content");
+    if (!db) return;
+    if (activeTab === "log") content.innerHTML = renderLog();
+    else if (activeTab === "models") content.innerHTML = renderModels();
+    else if (activeTab === "accessories") content.innerHTML = renderAccessories();
+    else if (activeTab === "estimator") content.innerHTML = renderEstimator();
+    else if (activeTab === "invoices") content.innerHTML = renderInvoices();
+    else if (activeTab === "dashboard") content.innerHTML = renderDashboard();
+    wireTab();
+  }
+
+  // ---------- Time Log tab ----------
+  function renderLog() {
+    const jobOptions = state.jobs.map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
+    const crewOptions = state.crew.filter(c => c.active !== false).map(c => '<option value="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</option>').join("");
+    const catOptions = state.settings.categories.map(c => '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>').join("");
+
+    const recent = state.timelogs.slice(0, 25);
+    const rows = recent.map(l => {
+      const job = state.jobs.find(j => j.id === l.jobId);
+      return '<tr><td>' + escapeHtml(l.date || "") + '</td><td>' + escapeHtml(l.crewName) + '</td><td>' +
+        escapeHtml(job ? job.name : (l.jobName || "—")) + '</td><td>' + escapeHtml(l.category) + '</td>' +
+        '<td class="num">' + (Number(l.hours) || 0).toFixed(1) + '</td>' +
+        '<td><button class="x-btn" data-del-log="' + l.id + '">✕</button></td></tr>';
+    }).join("");
+
+    return '' +
+      '<div class="card">' +
+        '<h2>Log hours</h2>' +
+        '<div class="row">' +
+          '<div><label>Crew member</label><select id="logCrew">' + crewOptions + '</select></div>' +
+          '<div><label>Date</label><input id="logDate" type="date" value="' + todayISO() + '"></div>' +
+        '</div>' +
+        '<div class="row">' +
+          '<div><label>Van / job</label><select id="logJob"><option value="">— pick a job —</option>' + jobOptions + '</select></div>' +
+        '</div>' +
+        '<div class="row">' +
+          '<div><label>Work category</label><select id="logCategory">' + catOptions + '</select></div>' +
+          '<div><label>Hours</label><input id="logHours" type="number" step="0.25" min="0" placeholder="e.g. 3.5"></div>' +
+        '</div>' +
+        '<label>Notes (optional)</label><textarea id="logNotes" rows="2" placeholder="What did you work on?"></textarea>' +
+        '<button class="btn" id="saveLog">Log hours</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h2>Recent entries</h2>' +
+        (recent.length ? '<table><thead><tr><th>Date</th><th>Crew</th><th>Van</th><th>Category</th><th class="num">Hrs</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
+          : '<div class="empty">No hours logged yet.</div>') +
+      '</div>';
+  }
+
+  function todayISO() { return new Date().toISOString().slice(0, 10); }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  // ---------- Van Models tab ----------
+  function renderModels() {
+    const cards = state.models.map(m => {
+      const t = modelTotals(m);
+      const partsRows = (m.parts || []).map((p, i) =>
+        '<div class="parts-row"><input value="' + escapeHtml(p.name) + '" data-model="' + m.id + '" data-partidx="' + i + '" data-field="name" class="part-field">' +
+        '<input type="number" value="' + p.cost + '" data-model="' + m.id + '" data-partidx="' + i + '" data-field="cost" class="part-field" placeholder="cost">' +
+        '<input type="number" value="' + p.price + '" data-model="' + m.id + '" data-partidx="' + i + '" data-field="price" class="part-field" placeholder="price">' +
+        '<button class="x-btn" data-del-part="' + m.id + '|' + i + '">✕</button></div>'
+      ).join("");
+      const laborRows = (m.laborEst || []).map((l, i) =>
+        '<div class="row" style="margin-top:4px;">' +
+        '<select data-model="' + m.id + '" data-laboridx="' + i + '" data-field="category" class="labor-field">' +
+          state.settings.categories.map(c => '<option ' + (c === l.category ? "selected" : "") + '>' + escapeHtml(c) + '</option>').join("") +
+        '</select>' +
+        '<input type="number" step="0.5" value="' + l.hours + '" data-model="' + m.id + '" data-laboridx="' + i + '" data-field="hours" class="labor-field" placeholder="est hours">' +
+        '<button class="x-btn" data-del-labor="' + m.id + '|' + i + '">✕</button></div>'
+      ).join("");
+
+      return '<div class="card">' +
+        '<div class="row" style="align-items:flex-start;">' +
+          '<div style="flex:2;"><label>Model name</label><input value="' + escapeHtml(m.name) + '" data-rename-model="' + m.id + '"></div>' +
+          '<div><label>&nbsp;</label><button class="btn danger tiny" data-del-model="' + m.id + '">Delete model</button></div>' +
+        '</div>' +
+        '<div class="stat-grid">' +
+          '<div class="stat"><div class="label">Parts cost</div><div class="value">' + fmt$(t.cost) + '</div></div>' +
+          '<div class="stat"><div class="label">Parts price</div><div class="value">' + fmt$(t.price) + '</div></div>' +
+          '<div class="stat"><div class="label">Parts margin</div><div class="value ' + (t.marginPct >= 0.4 ? "good" : t.marginPct >= 0.2 ? "warn" : "bad") + '">' + fmtPct(t.marginPct) + '</div></div>' +
+          '<div class="stat"><div class="label">Est. labor hrs</div><div class="value">' + t.laborHours.toFixed(1) + '</div></div>' +
+        '</div>' +
+        '<h3>Piece parts</h3>' + partsRows +
+        '<button class="btn secondary tiny" data-add-part="' + m.id + '">+ Add part</button>' +
+        '<h3>Estimated labor by category</h3>' + laborRows +
+        '<button class="btn secondary tiny" data-add-labor="' + m.id + '">+ Add labor line</button>' +
+      '</div>';
+    }).join("");
+
+    return '<div class="card"><h2>Add a van model</h2>' +
+      '<div class="row"><input id="newModelName" placeholder="e.g. The Rambler"></div>' +
+      '<button class="btn" id="addModel">+ Add model</button></div>' +
+      (cards || '<div class="card"><div class="empty">No models yet — add your first one above.</div></div>');
+  }
+
+  // ---------- Accessories tab ----------
+  function renderAccessories() {
+    const rows = state.accessories.map(a => {
+      const margin = a.price ? (a.price - a.cost) / a.price : NaN;
+      return '<tr>' +
+        '<td><input value="' + escapeHtml(a.name) + '" data-acc="' + a.id + '" data-field="name" class="acc-field" style="min-width:140px;"></td>' +
+        '<td><select data-acc="' + a.id + '" data-field="category" class="acc-field">' +
+          state.settings.categories.map(c => '<option ' + (c === a.category ? "selected" : "") + '>' + escapeHtml(c) + '</option>').join("") +
+        '</select></td>' +
+        '<td><input type="number" value="' + a.cost + '" data-acc="' + a.id + '" data-field="cost" class="acc-field" style="width:80px;"></td>' +
+        '<td><input type="number" value="' + a.price + '" data-acc="' + a.id + '" data-field="price" class="acc-field" style="width:80px;"></td>' +
+        '<td><input type="number" step="0.5" value="' + a.hours + '" data-acc="' + a.id + '" data-field="hours" class="acc-field" style="width:70px;"></td>' +
+        '<td class="num">' + fmtPct(margin) + '</td>' +
+        '<td><button class="x-btn" data-del-acc="' + a.id + '">✕</button></td>' +
+      '</tr>';
+    }).join("");
+
+    return '<div class="card"><h2>Add a custom accessory</h2>' +
+      '<div class="row"><input id="newAccName" placeholder="e.g. Solar panel upgrade"></div>' +
+      '<button class="btn" id="addAcc">+ Add accessory</button></div>' +
+      '<div class="card"><h2>Accessory catalog</h2>' +
+      (state.accessories.length
+        ? '<table><thead><tr><th>Name</th><th>Category</th><th>Cost</th><th>Price</th><th>Est hrs</th><th class="num">Margin</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
+        : '<div class="empty">No accessories yet.</div>') +
+      '</div>';
+  }
+
+  // ---------- Job Estimator tab ----------
+  function renderEstimator() {
+    const modelOptions = state.models.map(m => '<option value="' + m.id + '">' + escapeHtml(m.name) + '</option>').join("");
+    const accChips = state.accessories.map(a =>
+      '<span class="chip" data-acc-chip="' + a.id + '">' + escapeHtml(a.name) + ' (' + fmt$(a.price) + ')</span>'
+    ).join("");
+
+    const jobRows = state.jobs.map(j => {
+      const t = jobTotals(j);
+      const act = jobActuals(j.id);
+      const actMarginPct = t.price ? (t.price - t.partsCost - act.cost) / t.price : NaN;
+      return '<tr>' +
+        '<td>' + escapeHtml(j.name) + '<div class="muted">' + escapeHtml((state.models.find(m=>m.id===j.modelId)||{}).name || "") + '</div></td>' +
+        '<td class="num">' + fmt$(t.price) + '</td>' +
+        '<td class="num">' + fmtPct(t.marginPct) + ' <span class="muted">est</span></td>' +
+        '<td class="num">' + t.estHours.toFixed(1) + '</td>' +
+        '<td class="num">' + act.hours.toFixed(1) + '</td>' +
+        '<td class="num ' + (actMarginPct >= t.marginPct ? "" : "") + '">' + fmtPct(actMarginPct) + ' <span class="muted">actual</span></td>' +
+        '<td>' + (isAdmin ? '<button class="x-btn" data-del-job="' + j.id + '">✕</button>' : '') + '</td>' +
+      '</tr>';
+    }).join("");
+
+    const createCard = isAdmin ?
+      '<div class="card">' +
+        '<h2>Build a quote / create a job</h2>' +
+        '<div class="row">' +
+          '<div><label>Job / van name</label><input id="estName" placeholder="e.g. Customer name or Van #"></div>' +
+          '<div><label>Van model</label><select id="estModel"><option value="">— pick a model —</option>' + modelOptions + '</select></div>' +
+        '</div>' +
+        '<label>Accessories (click to add)</label>' +
+        '<div class="badge-row" id="estAccChips">' + (accChips || '<span class="muted">No accessories in catalog yet.</span>') + '</div>' +
+        '<div class="divider"></div>' +
+        '<div id="estSummary" class="stat-grid"></div>' +
+        '<button class="btn" id="saveJob">Save as job</button>' +
+      '</div>'
+    :
+      '<div class="card"><h2>Vans / jobs</h2><p class="muted">Only Steve adds new van/job names, so the list stays clean — pick from it when logging hours or submitting invoices.</p></div>';
+
+    return createCard +
+    '<div class="card"><h2>All jobs</h2>' +
+      (state.jobs.length
+        ? '<table><thead><tr><th>Job</th><th class="num">Quote price</th><th class="num">Est margin</th><th class="num">Est hrs</th><th class="num">Actual hrs</th><th class="num">Actual margin</th><th></th></tr></thead><tbody>' + jobRows + '</tbody></table>'
+        : '<div class="empty">No jobs yet — build one above.</div>') +
+    '</div>';
+  }
+
+  let estSelectedAcc = new Set();
+
+  function updateEstSummary() {
+    const modelId = document.getElementById("estModel") ? document.getElementById("estModel").value : "";
+    const model = state.models.find(m => m.id === modelId);
+    const fakeJob = { modelId: modelId, accessoryIds: Array.from(estSelectedAcc) };
+    const t = jobTotals(fakeJob);
+    const el = document.getElementById("estSummary");
+    if (!el) return;
+    if (!model) { el.innerHTML = '<div class="empty">Pick a model to see the quote.</div>'; return; }
+    el.innerHTML =
+      '<div class="stat"><div class="label">Quote price</div><div class="value">' + fmt$(t.price) + '</div></div>' +
+      '<div class="stat"><div class="label">Parts + labor cost</div><div class="value">' + fmt$(t.totalCost) + '</div></div>' +
+      '<div class="stat"><div class="label">Est. margin</div><div class="value ' + (t.marginPct >= 0.3 ? "good" : t.marginPct >= 0.15 ? "warn" : "bad") + '">' + fmtPct(t.marginPct) + '</div></div>' +
+      '<div class="stat"><div class="label">Est. labor hrs</div><div class="value">' + t.estHours.toFixed(1) + '</div></div>';
+  }
+
+  // ---------- Invoice Requests tab ----------
+  let invoiceLines = [{ desc: "", amount: "" }];
+
+  function renderInvoices() {
+    const crewOptions = state.crew.filter(c => c.active !== false).map(c => '<option value="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</option>').join("");
+    const jobOptions = state.jobs.map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
+    const lineRows = invoiceLines.map((li, i) =>
+      '<div class="parts-row" style="grid-template-columns:1fr 100px 32px;">' +
+        '<input value="' + escapeHtml(li.desc) + '" data-invline="' + i + '" data-field="desc" class="invline-field" placeholder="Description of work / item">' +
+        '<input type="number" value="' + li.amount + '" data-invline="' + i + '" data-field="amount" class="invline-field" placeholder="$">' +
+        '<button class="x-btn" data-del-invline="' + i + '">✕</button>' +
+      '</div>'
+    ).join("");
+    const total = invoiceLines.reduce((s, l) => s + (parseFloat(l.amount) || 0), 0);
+
+    const reqRows = state.invoiceRequests.map(r => {
+      const itemsSummary = (r.items || []).map(it => it.desc).join(", ");
+      return '<tr>' +
+        '<td>' + new Date(r.createdAt).toLocaleDateString() + '</td>' +
+        '<td>' + escapeHtml(r.submittedBy) + '</td>' +
+        '<td>' + escapeHtml(r.jobName || "—") + '<div class="muted">' + escapeHtml(itemsSummary) + '</div></td>' +
+        '<td class="num">' + fmt$(r.total) + '</td>' +
+        '<td><select class="inv-status" data-inv="' + r.id + '">' +
+          ["pending", "approved", "sent", "declined"].map(s => '<option value="' + s + '" ' + (r.status === s ? "selected" : "") + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>').join("") +
+        '</select></td>' +
+        '<td><button class="x-btn" data-del-inv="' + r.id + '">✕</button></td>' +
+      '</tr>';
+    }).join("");
+
+    const pendingCount = state.invoiceRequests.filter(r => r.status === "pending").length;
+
+    return '<div class="card">' +
+      '<h2>Submit an invoice request</h2>' +
+      '<div class="row">' +
+        '<div><label>Submitted by</label><select id="invSubmittedBy"><option value="">— pick —</option>' + crewOptions + '</select></div>' +
+        '<div><label>Job</label><select id="invJob"><option value="">— pick a job —</option>' + jobOptions + '</select></div>' +
+      '</div>' +
+      '<h3>Line items</h3>' + lineRows +
+      '<button class="btn secondary tiny" id="addInvLine">+ Add line</button>' +
+      '<div class="savebar"><span class="muted">Total: </span><strong id="invTotal">' + fmt$(total) + '</strong></div>' +
+      '<label>Notes for whoever reviews this</label><textarea id="invNotes" rows="2" placeholder="Anything they should know before it gets sent"></textarea>' +
+      '<button class="btn" id="submitInvoice">Submit for review</button>' +
+    '</div>' +
+    '<div class="card"><h2>Requests' + (pendingCount ? ' <span class="pill">' + pendingCount + ' pending</span>' : '') + '</h2>' +
+      (state.invoiceRequests.length
+        ? '<table><thead><tr><th>Date</th><th>Submitted by</th><th>Job</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>' + reqRows + '</tbody></table>'
+        : '<div class="empty">No invoice requests yet.</div>') +
+      '<p class="muted" style="margin-top:10px;">Approving here doesn\'t send anything to QuickBooks automatically — whoever has QuickBooks access still needs to create/send the actual invoice from the approved request.</p>' +
+    '</div>';
+  }
+
+
+  function renderDashboard() {
+    const totalHours = state.timelogs.reduce((s, l) => s + (Number(l.hours) || 0), 0);
+    const byCat = {};
+    state.timelogs.forEach(l => { byCat[l.category] = (byCat[l.category] || 0) + (Number(l.hours) || 0); });
+    const catRows = Object.keys(byCat).sort((a,b) => byCat[b]-byCat[a]).map(c =>
+      '<div class="list-item"><span>' + escapeHtml(c) + '</span><span class="muted">' + byCat[c].toFixed(1) + ' hrs</span></div>'
+    ).join("");
+
+    const byCrew = {};
+    state.timelogs.forEach(l => { byCrew[l.crewName] = (byCrew[l.crewName] || 0) + (Number(l.hours) || 0); });
+    const crewRows = Object.keys(byCrew).sort((a,b) => byCrew[b]-byCrew[a]).map(c => {
+      const crew = state.crew.find(x => x.name === c);
+      const hasRate = isAdmin && crew && Object.prototype.hasOwnProperty.call(state.rates, crew.id);
+      const costPart = hasRate ? (' · ' + fmt$(byCrew[c] * (Number(state.rates[crew.id]) || 0))) : '';
+      return '<div class="list-item"><span>' + escapeHtml(c) + '</span><span class="muted">' + byCrew[c].toFixed(1) + ' hrs' + costPart + '</span></div>';
+    }).join("");
+
+    const modelMargins = state.models.map(m => {
+      const t = modelTotals(m);
+      return '<div class="list-item"><span>' + escapeHtml(m.name) + '</span><span class="muted">' + fmtPct(t.marginPct) + ' parts margin</span></div>';
+    }).join("");
+
+    return '<div class="card">' +
+      '<h2>Overview</h2>' +
+      '<div class="stat-grid">' +
+        '<div class="stat"><div class="label">Total logged hours</div><div class="value">' + totalHours.toFixed(1) + '</div></div>' +
+        '<div class="stat"><div class="label">Jobs tracked</div><div class="value">' + state.jobs.length + '</div></div>' +
+        '<div class="stat"><div class="label">Models</div><div class="value">' + state.models.length + '</div></div>' +
+        '<div class="stat"><div class="label">Accessories</div><div class="value">' + state.accessories.length + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card"><h2>Hours by category</h2>' + (catRows || '<div class="empty">No data yet.</div>') + '</div>' +
+    '<div class="card"><h2>Hours & cost by crew</h2>' + (crewRows || '<div class="empty">No data yet.</div>') + '</div>' +
+    '<div class="card"><h2>Model parts margins</h2>' + (modelMargins || '<div class="empty">No models yet.</div>') + '</div>' +
+    '<div class="card"><h2>Crew & shop settings</h2>' +
+      renderCrewSettings() +
+      '<h3>Default shop labor rate (used for job estimates)</h3>' +
+      '<div class="row"><input id="shopRate" type="number" value="' + (state.settings.shopRate || 0) + '" style="max-width:140px;"></div>' +
+      '<button class="btn secondary tiny" id="saveShopRate" style="margin-top:8px;">Save rate</button>' +
+    '</div>';
+  }
+
+  function renderCrewSettings() {
+    const rows = state.crew.map(c => {
+      const rateInput = isAdmin
+        ? '<input type="number" value="' + (Object.prototype.hasOwnProperty.call(state.rates, c.id) ? state.rates[c.id] : 0) + '" data-crew="' + c.id + '" data-field="rate" class="crew-field" style="max-width:80px;" placeholder="$/hr">'
+        : '';
+      return '<div class="list-item">' +
+        '<input value="' + escapeHtml(c.name) + '" data-crew="' + c.id + '" data-field="name" class="crew-field" style="max-width:160px;">' +
+        rateInput +
+        '<button class="x-btn" data-del-crew="' + c.id + '">✕</button>' +
+      '</div>';
+    }).join("");
+    const heading = isAdmin ? "Crew & hourly rates" : "Crew";
+    return '<h3>' + heading + '</h3>' + rows +
+      '<div class="row" style="margin-top:8px;"><input id="newCrewName" placeholder="New crew member name"></div>' +
+      '<button class="btn secondary tiny" id="addCrew">+ Add crew member</button>';
+  }
+
+  // ---------- Wiring ----------
+  function wireTab() {
+    // Log tab
+    const saveLog = document.getElementById("saveLog");
+    if (saveLog) saveLog.onclick = () => {
+      const crewName = document.getElementById("logCrew").value;
+      const jobId = document.getElementById("logJob").value;
+      const category = document.getElementById("logCategory").value;
+      const hours = parseFloat(document.getElementById("logHours").value);
+      const date = document.getElementById("logDate").value;
+      const notes = document.getElementById("logNotes").value.trim();
+      if (!crewName || !hours || hours <= 0) { alert("Pick a crew member and enter hours."); return; }
+      if (!jobId) { alert("Pick a van / job."); return; }
+      const job = state.jobs.find(j => j.id === jobId);
+      db.collection("timelogs").add({
+        crewName, jobId: jobId, jobName: job ? job.name : "",
+        category, hours, date, notes, createdAt: Date.now()
+      }).catch(() => {});
+      document.getElementById("logHours").value = "";
+      document.getElementById("logNotes").value = "";
+    };
+    document.querySelectorAll("[data-del-log]").forEach(b => b.onclick = () => {
+      db.doc("timelogs/" + b.dataset.delLog).delete().catch(() => {});
+    });
+
+    // Models tab
+    const addModel = document.getElementById("addModel");
+    if (addModel) addModel.onclick = () => {
+      const name = document.getElementById("newModelName").value.trim();
+      if (!name) return;
+      db.collection("models").add({ name, parts: [], laborEst: [] }).catch(() => {});
+      document.getElementById("newModelName").value = "";
+    };
+    document.querySelectorAll("[data-rename-model]").forEach(el => {
+      el.onchange = () => db.doc("models/" + el.dataset.renameModel).update({ name: el.value }).catch(() => {});
+    });
+    document.querySelectorAll("[data-del-model]").forEach(b => b.onclick = () => {
+      if (confirm("Delete this model?")) db.doc("models/" + b.dataset.delModel).delete().catch(() => {});
+    });
+    document.querySelectorAll("[data-add-part]").forEach(b => b.onclick = () => {
+      const m = state.models.find(x => x.id === b.dataset.addPart);
+      const parts = (m.parts || []).concat([{ name: "New part", cost: 0, price: 0 }]);
+      db.doc("models/" + m.id).update({ parts }).catch(() => {});
+    });
+    document.querySelectorAll("[data-del-part]").forEach(b => b.onclick = () => {
+      const [mid, idx] = b.dataset.delPart.split("|");
+      const m = state.models.find(x => x.id === mid);
+      const parts = (m.parts || []).slice(); parts.splice(+idx, 1);
+      db.doc("models/" + mid).update({ parts }).catch(() => {});
+    });
+    document.querySelectorAll(".part-field").forEach(el => {
+      el.onchange = () => {
+        const m = state.models.find(x => x.id === el.dataset.model);
+        const parts = (m.parts || []).slice();
+        const idx = +el.dataset.partidx, field = el.dataset.field;
+        parts[idx] = Object.assign({}, parts[idx], { [field]: field === "name" ? el.value : parseFloat(el.value) || 0 });
+        db.doc("models/" + m.id).update({ parts }).catch(() => {});
+      };
+    });
+    document.querySelectorAll("[data-add-labor]").forEach(b => b.onclick = () => {
+      const m = state.models.find(x => x.id === b.dataset.addLabor);
+      const laborEst = (m.laborEst || []).concat([{ category: state.settings.categories[0], hours: 0 }]);
+      db.doc("models/" + m.id).update({ laborEst }).catch(() => {});
+    });
+    document.querySelectorAll("[data-del-labor]").forEach(b => b.onclick = () => {
+      const [mid, idx] = b.dataset.delLabor.split("|");
+      const m = state.models.find(x => x.id === mid);
+      const laborEst = (m.laborEst || []).slice(); laborEst.splice(+idx, 1);
+      db.doc("models/" + mid).update({ laborEst }).catch(() => {});
+    });
+    document.querySelectorAll(".labor-field").forEach(el => {
+      el.onchange = () => {
+        const m = state.models.find(x => x.id === el.dataset.model);
+        const laborEst = (m.laborEst || []).slice();
+        const idx = +el.dataset.laboridx, field = el.dataset.field;
+        laborEst[idx] = Object.assign({}, laborEst[idx], { [field]: field === "category" ? el.value : parseFloat(el.value) || 0 });
+        db.doc("models/" + m.id).update({ laborEst }).catch(() => {});
+      };
+    });
+
+    // Accessories tab
+    const addAcc = document.getElementById("addAcc");
+    if (addAcc) addAcc.onclick = () => {
+      const name = document.getElementById("newAccName").value.trim();
+      if (!name) return;
+      db.collection("accessories").add({ name, category: state.settings.categories[0], cost: 0, price: 0, hours: 0 }).catch(() => {});
+      document.getElementById("newAccName").value = "";
+    };
+    document.querySelectorAll(".acc-field").forEach(el => {
+      el.onchange = () => {
+        const field = el.dataset.field;
+        const val = (field === "cost" || field === "price" || field === "hours") ? parseFloat(el.value) || 0 : el.value;
+        db.doc("accessories/" + el.dataset.acc).update({ [field]: val }).catch(() => {});
+      };
+    });
+    document.querySelectorAll("[data-del-acc]").forEach(b => b.onclick = () => {
+      db.doc("accessories/" + b.dataset.delAcc).delete().catch(() => {});
+    });
+
+    // Estimator tab
+    const estModel = document.getElementById("estModel");
+    if (estModel) { estModel.onchange = updateEstSummary; updateEstSummary(); }
+    document.querySelectorAll("[data-acc-chip]").forEach(chip => {
+      if (estSelectedAcc.has(chip.dataset.accChip)) chip.classList.add("selected");
+      chip.onclick = () => {
+        const id = chip.dataset.accChip;
+        if (estSelectedAcc.has(id)) estSelectedAcc.delete(id); else estSelectedAcc.add(id);
+        chip.classList.toggle("selected");
+        updateEstSummary();
+      };
+    });
+    const saveJob = document.getElementById("saveJob");
+    if (saveJob) saveJob.onclick = () => {
+      const name = document.getElementById("estName").value.trim();
+      const modelId = document.getElementById("estModel").value;
+      if (!name || !modelId) { alert("Enter a job name and pick a model."); return; }
+      db.collection("jobs").add({
+        name, modelId, accessoryIds: Array.from(estSelectedAcc), createdAt: Date.now(), status: "quoted"
+      }).catch(() => {});
+      document.getElementById("estName").value = "";
+      estSelectedAcc = new Set();
+    };
+    document.querySelectorAll("[data-del-job]").forEach(b => b.onclick = () => {
+      if (confirm("Delete this job? Logged hours against it will stay but become unlinked.")) {
+        db.doc("jobs/" + b.dataset.delJob).delete().catch(() => {});
+      }
+    });
+
+    // Invoice Requests tab
+    document.querySelectorAll(".invline-field").forEach(el => {
+      el.oninput = () => {
+        const i = +el.dataset.invline, field = el.dataset.field;
+        invoiceLines[i][field] = el.value;
+        const total = invoiceLines.reduce((s, l) => s + (parseFloat(l.amount) || 0), 0);
+        const totalEl = document.getElementById("invTotal");
+        if (totalEl) totalEl.textContent = fmt$(total);
+      };
+    });
+    document.querySelectorAll("[data-del-invline]").forEach(b => b.onclick = () => {
+      invoiceLines.splice(+b.dataset.delInvline, 1);
+      if (!invoiceLines.length) invoiceLines.push({ desc: "", amount: "" });
+      render();
+    });
+    const addInvLine = document.getElementById("addInvLine");
+    if (addInvLine) addInvLine.onclick = () => { invoiceLines.push({ desc: "", amount: "" }); render(); };
+    const submitInvoice = document.getElementById("submitInvoice");
+    if (submitInvoice) submitInvoice.onclick = () => {
+      const submittedBy = document.getElementById("invSubmittedBy").value;
+      const jobId = document.getElementById("invJob").value;
+      const job = state.jobs.find(j => j.id === jobId);
+      const notes = document.getElementById("invNotes").value.trim();
+      const items = invoiceLines.filter(l => l.desc.trim() && parseFloat(l.amount) > 0).map(l => ({ desc: l.desc.trim(), amount: parseFloat(l.amount) || 0 }));
+      if (!submittedBy) { alert("Pick who's submitting this."); return; }
+      if (!job) { alert("Pick a job."); return; }
+      if (!items.length) { alert("Add at least one line item with a description and amount."); return; }
+      const total = items.reduce((s, l) => s + l.amount, 0);
+      db.collection("invoiceRequests").add({
+        submittedBy, jobId: jobId, jobName: job.name,
+        items, total, notes, status: "pending", createdAt: Date.now()
+      }).catch(() => {});
+      invoiceLines = [{ desc: "", amount: "" }];
+      render();
+    };
+    document.querySelectorAll(".inv-status").forEach(sel => {
+      sel.onchange = () => db.doc("invoiceRequests/" + sel.dataset.inv).update({ status: sel.value }).catch(() => {});
+    });
+    document.querySelectorAll("[data-del-inv]").forEach(b => b.onclick = () => {
+      if (confirm("Delete this invoice request?")) db.doc("invoiceRequests/" + b.dataset.delInv).delete().catch(() => {});
+    });
+
+    // Dashboard tab
+    document.querySelectorAll(".crew-field").forEach(el => {
+      el.onchange = () => {
+        const field = el.dataset.field;
+        const id = el.dataset.crew;
+        if (field === "rate") {
+          const val = parseFloat(el.value) || 0;
+          db.doc("rates/" + id).set({ rate: val }).catch(() => {});
+        } else {
+          db.doc("crew/" + id).update({ [field]: el.value }).catch(() => {});
+        }
+      };
+    });
+    document.querySelectorAll("[data-del-crew]").forEach(b => b.onclick = () => {
+      if (confirm("Remove this crew member?")) {
+        db.doc("crew/" + b.dataset.delCrew).delete().catch(() => {});
+        if (isAdmin) db.doc("rates/" + b.dataset.delCrew).delete().catch(() => {});
+      }
+    });
+    const addCrew = document.getElementById("addCrew");
+    if (addCrew) addCrew.onclick = () => {
+      const name = document.getElementById("newCrewName").value.trim();
+      if (!name) return;
+      db.collection("crew").add({ name, active: true }).catch(() => {});
+      document.getElementById("newCrewName").value = "";
+    };
+    const saveShopRate = document.getElementById("saveShopRate");
+    if (saveShopRate) saveShopRate.onclick = () => {
+      const rate = parseFloat(document.getElementById("shopRate").value) || 0;
+      db.doc("settings/config").update({ shopRate: rate }).catch(() => {});
+    };
+  }
+
+  // ---------- Auth wiring ----------
+  let subscribedOnce = false;
+  setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById("authWrap").style.display = "none";
+      document.getElementById("appWrap").style.display = "";
+      document.getElementById("userBar").innerHTML =
+        "Signed in as " + escapeHtml(user.email) + ' · <a href="#" id="signOutLink">Sign out</a>';
+      const signOutLink = document.getElementById("signOutLink");
+      if (signOutLink) signOutLink.onclick = (e) => { e.preventDefault(); signOut(auth); };
+      if (!subscribedOnce) {
+        subscribedOnce = true;
+        db = makeDbShim();
+        subscribeAll();
+      }
+      initUser(user);
+    } else {
+      document.getElementById("authWrap").style.display = "";
+      document.getElementById("appWrap").style.display = "none";
+    }
+  });
+
+  function doSignIn() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const errEl = document.getElementById("authError");
+    errEl.style.display = "none";
+    signInWithEmailAndPassword(auth, email, password).catch(() => {
+      errEl.textContent = "Couldn't sign in — check your email and password.";
+      errEl.style.display = "";
+    });
+  }
+  document.getElementById("authSubmit").onclick = doSignIn;
+  document.getElementById("authPassword").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
+  document.getElementById("authEmail").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("authPassword").focus(); });
+})();
+</script>
+</body>
+</html>
