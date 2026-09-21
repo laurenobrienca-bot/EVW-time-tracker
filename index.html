@@ -212,11 +212,13 @@
   <div class="card" style="max-width:380px;margin:40px auto;">
     <h2 id="authHeading">Who are you?</h2>
     <p class="muted" id="authIntro" style="margin-top:-4px;"></p>
-    <div class="row"><div><label>Your name</label><select id="authName"></select></div></div>
+    <div class="row" id="authNameRow"><div><label>Your name</label><select id="authName"></select></div></div>
+    <div class="row" id="authEmailRow" style="display:none;"><div><label>Admin email</label><input id="authEmail" type="email" autocomplete="username" placeholder="steve@elevatedvanworks.com"></div></div>
     <div class="row" id="authPasswordRow" style="margin-top:8px;"><div><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Shop password"></div></div>
     <div id="authError" class="muted" style="color:var(--bad);margin-top:8px;display:none;"></div>
     <button class="btn" id="authSubmit" style="margin-top:12px;width:100%;">Save &amp; continue</button>
     <p class="muted" id="authFooter" style="margin-top:10px;">You’ll stay signed in on this device — no need to do this again tomorrow.</p>
+    <p class="muted" id="authAdminToggleWrap" style="margin-top:10px;"><a href="#" id="authAdminToggle">Admin sign-in</a></p>
   </div>
 </div>
 
@@ -267,9 +269,29 @@
   // Firestore rather than merely hidden in the UI, while still being a
   // single one-time sign-in per device.
   const CREW_ACCOUNT_EMAIL = "crew@elevatedvanworks.com";
-  const NAME_TO_EMAIL = { "Stephen Kepple": "steve@elevatedvanworks.com" };
+  const ADMIN_ACCOUNT_EMAIL = ADMIN_EMAILS[0];
+
+  // Match on a normalised key (lowercased, anything non-letter collapsed to a
+  // single space) rather than the raw string, and accept every spelling of
+  // Steve's name that could plausibly sit in the crew list. The exact-string
+  // version this replaces failed silently: if his crew entry read "Steve"
+  // rather than "Stephen Kepple", the lookup missed, the sign-in fell through
+  // to the shared crew account, and his admin password came back "rejected"
+  // with no hint that it had been checked against the wrong account.
+  const ADMIN_NAME_ALIASES = ["Stephen Kepple", "Steve Kepple", "Stephen", "Steve"];
+  function normalizeName(name) {
+    return String(name || "").toLowerCase().replace(/[^a-z]+/g, " ").trim();
+  }
+  const NAME_TO_EMAIL = {};
+  ADMIN_NAME_ALIASES.forEach(n => { NAME_TO_EMAIL[normalizeName(n)] = ADMIN_ACCOUNT_EMAIL; });
   function emailForName(name) {
-    return NAME_TO_EMAIL[name] || CREW_ACCOUNT_EMAIL;
+    return NAME_TO_EMAIL[normalizeName(name)] || CREW_ACCOUNT_EMAIL;
+  }
+  // The roster name to file Steve's own time card under once he signs in
+  // through the admin path, where no name gets picked from the list.
+  function adminRosterName() {
+    const match = rosterNames().filter(n => emailForName(n) === ADMIN_ACCOUNT_EMAIL);
+    return match.length ? match[0] : ADMIN_NAME_ALIASES[0];
   }
 
   // Thin shim so every db.collection(...)/db.doc(...) call below (written
@@ -1103,7 +1125,10 @@
     let names = [];
     try { names = JSON.parse(localStorage.getItem(LS_ROSTER) || "[]"); } catch (e) {}
     if (!Array.isArray(names) || !names.length) names = DEFAULT_CREW.map(c => c.name);
-    Object.keys(NAME_TO_EMAIL).forEach(n => { if (names.indexOf(n) === -1) names.push(n); });
+    // Guarantee Steve is offered even if the cached roster predates his crew
+    // entry. Compared on the normalised key so a roster that already lists him
+    // as "Steve" doesn't produce a second, duplicate option.
+    if (!names.some(n => emailForName(n) === ADMIN_ACCOUNT_EMAIL)) names.push(ADMIN_NAME_ALIASES[0]);
     return names;
   }
 
@@ -1116,8 +1141,13 @@
   // needPassword is false for the "wrong name on this device" case: already
   // signed in, so only the name needs re-picking.
   let authNeedsPassword = true;
+  // Admin mode types an email address instead of picking a name, so Steve can
+  // always reach his own account even if his crew entry is renamed, missing,
+  // or spelled in a way the alias list doesn't cover.
+  let authAdminMode = false;
   function showNamePicker(needPassword) {
     authNeedsPassword = needPassword;
+    authAdminMode = false;
     document.getElementById("authName").innerHTML = rosterNames().map(n =>
       '<option value="' + escapeHtml(n) + '"' + (n === currentUserName ? " selected" : "") + '>' + escapeHtml(n) + '</option>'
     ).join("");
@@ -1129,7 +1159,27 @@
       : "Pick whose time card this device should open to.";
     document.getElementById("authSubmit").textContent = needPassword ? "Save & continue" : "Save";
     document.getElementById("authError").style.display = "none";
+    // The admin path only makes sense when a password is actually being asked
+    // for; the "whose time card?" pass is already authenticated.
+    document.getElementById("authAdminToggleWrap").style.display = needPassword ? "" : "none";
+    applyAuthMode();
     showScreen("auth");
+  }
+
+  function applyAuthMode() {
+    document.getElementById("authNameRow").style.display = authAdminMode ? "none" : "";
+    document.getElementById("authEmailRow").style.display = authAdminMode ? "" : "none";
+    document.getElementById("authPassword").placeholder = authAdminMode ? "Admin password" : "Shop password";
+    document.getElementById("authAdminToggle").textContent = authAdminMode
+      ? "Back to crew sign-in"
+      : "Admin sign-in";
+    if (authAdminMode) {
+      document.getElementById("authHeading").textContent = "Admin sign-in";
+      document.getElementById("authIntro").textContent =
+        "For Steve\u2019s own account — a different password from the shared crew one.";
+      const emailEl = document.getElementById("authEmail");
+      if (!emailEl.value) emailEl.value = ADMIN_ACCOUNT_EMAIL;
+    }
   }
 
   function setCurrentUserName(name) {
@@ -1163,10 +1213,16 @@
   });
 
   async function doSignIn() {
-    const name = document.getElementById("authName").value;
     const errEl = document.getElementById("authError");
     errEl.style.display = "none";
-    if (!name) { errEl.textContent = "Pick your name."; errEl.style.display = ""; return; }
+
+    const name = authAdminMode ? adminRosterName() : document.getElementById("authName").value;
+    const email = authAdminMode
+      ? document.getElementById("authEmail").value.trim()
+      : emailForName(name);
+
+    if (authAdminMode && !email) { errEl.textContent = "Enter the admin email."; errEl.style.display = ""; return; }
+    if (!authAdminMode && !name) { errEl.textContent = "Pick your name."; errEl.style.display = ""; return; }
 
     // Already authenticated: nothing to sign in to, just remember the name.
     if (!authNeedsPassword) {
@@ -1180,10 +1236,20 @@
     btn.disabled = true;
     try {
       await persistenceReady;
-      await signInWithEmailAndPassword(auth, emailForName(name), password);
+      await signInWithEmailAndPassword(auth, email, password);
       setCurrentUserName(name);
     } catch (e) {
-      errEl.textContent = "Couldn\u2019t sign in — check the password and try again.";
+      // Name the account that was tried. The old message only said "check the
+      // password", which reads as "your password is wrong" even when the real
+      // problem is that the name picked resolved to the other account.
+      const code = (e && e.code) || "";
+      let msg = "Couldn\u2019t sign in as <strong>" + escapeHtml(email) + "</strong> — that password didn\u2019t match.";
+      if (code === "auth/user-not-found" || code === "auth/invalid-email") {
+        msg = "There\u2019s no account for <strong>" + escapeHtml(email) + "</strong> yet — it has to be created in Firebase Authentication first.";
+      } else if (email === CREW_ACCOUNT_EMAIL) {
+        msg += " Note that\u2019s the shared crew account, not an admin one — use Admin sign-in below for Steve\u2019s password.";
+      }
+      errEl.innerHTML = msg;
       errEl.style.display = "";
     } finally {
       btn.disabled = false;
@@ -1191,6 +1257,19 @@
   }
   document.getElementById("authSubmit").onclick = doSignIn;
   document.getElementById("authPassword").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
+  document.getElementById("authEmail").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
+  document.getElementById("authAdminToggle").onclick = (e) => {
+    e.preventDefault();
+    authAdminMode = !authAdminMode;
+    document.getElementById("authError").style.display = "none";
+    if (!authAdminMode) {
+      document.getElementById("authHeading").textContent = "Who are you?";
+      document.getElementById("authIntro").textContent =
+        "One-time setup on this device. After this it opens straight to your own time card.";
+    }
+    applyAuthMode();
+    document.getElementById("authPassword").value = "";
+  };
 
   // Deliberately kept off the main screen and out of the header: signing out
   // is the one action that forces someone to type a password again.
