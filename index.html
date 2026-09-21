@@ -196,16 +196,27 @@
 </head>
 <body>
 
-<div class="wrap" id="authWrap">
+<div class="wrap" id="bootWrap">
   <header>
     <h1>🚐 Elevated Vanworks — Build Tracker</h1>
   </header>
-  <div class="card" style="max-width:360px;margin:40px auto;">
-    <h2>Sign in</h2>
-    <div class="row"><div><label>Email</label><input id="authEmail" type="email" autocomplete="username"></div></div>
-    <div class="row" style="margin-top:8px;"><div><label>Password</label><input id="authPassword" type="password" autocomplete="current-password"></div></div>
+  <div class="card" style="max-width:380px;margin:40px auto;">
+    <div class="empty">Opening your time card…</div>
+  </div>
+</div>
+
+<div class="wrap" id="authWrap" style="display:none;">
+  <header>
+    <h1>🚐 Elevated Vanworks — Build Tracker</h1>
+  </header>
+  <div class="card" style="max-width:380px;margin:40px auto;">
+    <h2 id="authHeading">Who are you?</h2>
+    <p class="muted" id="authIntro" style="margin-top:-4px;"></p>
+    <div class="row"><div><label>Your name</label><select id="authName"></select></div></div>
+    <div class="row" id="authPasswordRow" style="margin-top:8px;"><div><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Shop password"></div></div>
     <div id="authError" class="muted" style="color:var(--bad);margin-top:8px;display:none;"></div>
-    <button class="btn" id="authSubmit" style="margin-top:12px;width:100%;">Sign in</button>
+    <button class="btn" id="authSubmit" style="margin-top:12px;width:100%;">Save &amp; continue</button>
+    <p class="muted" id="authFooter" style="margin-top:10px;">You’ll stay signed in on this device — no need to do this again tomorrow.</p>
   </div>
 </div>
 
@@ -228,7 +239,7 @@
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
     getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
-    setPersistence, browserLocalPersistence
+    setPersistence, browserLocalPersistence, indexedDBLocalPersistence
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -243,10 +254,23 @@
   const fsdb = getFirestore(fbApp);
   const auth = getAuth(fbApp);
 
-  // TODO: put Steve's real login email here — it must exactly match the
-  // email of the user you created in Firebase Authentication. This is the
-  // only account that can see/edit hourly rates or create new vans/jobs.
+  // Steve's login email — it must exactly match the email of the user you
+  // created in Firebase Authentication. This is the only account that can
+  // see/edit hourly rates or create new vans/jobs.
   const ADMIN_EMAILS = ["steve@elevatedvanworks.com"];
+
+  // Nobody types an email address. Crew pick their name from a list once on
+  // their own device, and that name maps to a Firebase Auth account behind
+  // the scenes: Steve gets his own admin account, everyone else shares the
+  // crew account. Sharing one crew login is deliberate — it keeps the
+  // admin-only rates rule (which is keyed to Steve's email) enforced by
+  // Firestore rather than merely hidden in the UI, while still being a
+  // single one-time sign-in per device.
+  const CREW_ACCOUNT_EMAIL = "crew@elevatedvanworks.com";
+  const NAME_TO_EMAIL = { "Stephen Kepple": "steve@elevatedvanworks.com" };
+  function emailForName(name) {
+    return NAME_TO_EMAIL[name] || CREW_ACCOUNT_EMAIL;
+  }
 
   // Thin shim so every db.collection(...)/db.doc(...) call below (written
   // originally for Claude's db capability) works unchanged against real
@@ -300,6 +324,14 @@
 
   let db = null;
   let isAdmin = false;
+
+  // Who this device belongs to. Picked once and kept in localStorage, so every
+  // later visit can skip straight to that person's time card.
+  const LS_NAME = "evwCurrentUser";
+  const LS_ROSTER = "evwCrewNames";
+  let currentUserName = "";
+  try { currentUserName = localStorage.getItem(LS_NAME) || ""; } catch (e) {}
+  let logScope = "mine";
   let state = {
     settings: { categories: DEFAULT_CATEGORIES, shopRate: 38 },
     crew: [],
@@ -376,6 +408,12 @@
     unsubs.push(db.collection("crew").onSnapshot(snap => {
       const docs = snap.docs || [];
       state.crew = docs.map(d => Object.assign({ id: d.id }, d.data));
+      // Cache the roster: the name picker has to be populated before sign-in,
+      // when Firestore isn't readable yet.
+      try {
+        const names = state.crew.filter(c => c.active !== false).map(c => c.name);
+        if (names.length) localStorage.setItem(LS_ROSTER, JSON.stringify(names));
+      } catch (e) {}
       if (docs.length === 0 && !seeded.crew) {
         seeded.crew = true;
         DEFAULT_CREW.forEach(c => {
@@ -507,10 +545,15 @@
   // ---------- Time Log tab ----------
   function renderLog() {
     const jobOptions = state.jobs.map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
-    const crewOptions = state.crew.filter(c => c.active !== false).map(c => '<option value="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</option>').join("");
+    const crewOptions = state.crew.filter(c => c.active !== false).map(c =>
+      '<option value="' + escapeHtml(c.name) + '"' + (c.name === currentUserName ? " selected" : "") + '>' + escapeHtml(c.name) + '</option>'
+    ).join("");
     const catOptions = state.settings.categories.map(c => '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>').join("");
 
-    const recent = state.timelogs.slice(0, 25);
+    // Default to just this person's own entries — this is their time card.
+    const mineOnly = logScope === "mine" && !!currentUserName;
+    const scoped = mineOnly ? state.timelogs.filter(l => l.crewName === currentUserName) : state.timelogs;
+    const recent = scoped.slice(0, 25);
     const rows = recent.map(l => {
       const job = state.jobs.find(j => j.id === l.jobId);
       return '<tr><td>' + escapeHtml(l.date || "") + '</td><td>' + escapeHtml(l.crewName) + '</td><td>' +
@@ -520,6 +563,7 @@
     }).join("");
 
     return '' +
+      renderMyTimecard() +
       '<div class="card">' +
         '<h2>Log hours</h2>' +
         '<div class="row">' +
@@ -538,12 +582,46 @@
       '</div>' +
       '<div class="card">' +
         '<h2>Recent entries</h2>' +
+        (currentUserName
+          ? '<div class="badge-row" style="margin-top:-4px;">' +
+              '<span class="chip' + (mineOnly ? " selected" : "") + '" data-scope="mine">Just mine</span>' +
+              '<span class="chip' + (mineOnly ? "" : " selected") + '" data-scope="all">Whole crew</span>' +
+            '</div>'
+          : '') +
         (recent.length ? '<table><thead><tr><th>Date</th><th>Crew</th><th>Van</th><th>Category</th><th class="num">Hrs</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
-          : '<div class="empty">No hours logged yet.</div>') +
+          : '<div class="empty">' + (mineOnly ? "You haven\u2019t logged any hours yet." : "No hours logged yet.") + '</div>') +
       '</div>';
   }
 
-  function todayISO() { return new Date().toISOString().slice(0, 10); }
+  // Running totals for whoever owns this device — the "time card" they land
+  // on when they open the app.
+  function renderMyTimecard() {
+    if (!currentUserName) return "";
+    const mine = state.timelogs.filter(l => l.crewName === currentUserName);
+    const now = new Date();
+    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7)); // back to Monday
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const since = (from) => mine.reduce((sum, l) => sum + ((l.date || "") >= isoLocal(from) ? (Number(l.hours) || 0) : 0), 0);
+    const total = mine.reduce((sum, l) => sum + (Number(l.hours) || 0), 0);
+    return '<div class="card">' +
+      '<h2>' + escapeHtml(currentUserName) + '\u2019s time card</h2>' +
+      '<div class="stat-grid">' +
+        '<div class="stat"><div class="label">This week</div><div class="value">' + since(weekStart).toFixed(1) + '</div></div>' +
+        '<div class="stat"><div class="label">This month</div><div class="value">' + since(monthStart).toFixed(1) + '</div></div>' +
+        '<div class="stat"><div class="label">All time</div><div class="value">' + total.toFixed(1) + '</div></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // Local calendar date, not UTC. new Date().toISOString() rolls over to
+  // tomorrow in the late afternoon in US timezones, which would date hours
+  // (and the week/month totals above) to the wrong day.
+  function isoLocal(d) {
+    const pad = (n) => String(n).padStart(2, "0");
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function todayISO() { return isoLocal(new Date()); }
   function escapeHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
@@ -772,6 +850,12 @@
       '<h3>Default shop labor rate (used for job estimates)</h3>' +
       '<div class="row"><input id="shopRate" type="number" value="' + (state.settings.shopRate || 0) + '" style="max-width:140px;"></div>' +
       '<button class="btn secondary tiny" id="saveShopRate" style="margin-top:8px;">Save rate</button>' +
+      '<div class="divider"></div>' +
+      '<h3>This device</h3>' +
+      '<p class="muted">This device stays signed in' +
+        (currentUserName ? ' as <strong>' + escapeHtml(currentUserName) + '</strong>' : '') +
+        '. Only sign out if someone else is taking it over — getting back in needs the password again.</p>' +
+      '<button class="btn secondary tiny" id="signOutBtn">Sign out</button>' +
     '</div>';
   }
 
@@ -795,6 +879,11 @@
   // ---------- Wiring ----------
   function wireTab() {
     // Log tab
+    document.querySelectorAll("[data-scope]").forEach(el => {
+      el.onclick = () => { logScope = el.dataset.scope; render(); };
+    });
+    const signOutBtn = document.getElementById("signOutBtn");
+    if (signOutBtn) signOutBtn.onclick = doSignOut;
     const saveLog = document.getElementById("saveLog");
     if (saveLog) saveLog.onclick = () => {
       const crewName = document.getElementById("logCrew").value;
@@ -996,42 +1085,120 @@
   }
 
   // ---------- Auth wiring ----------
+  // The session is meant to be permanent per device: sign in once, pick your
+  // name once, and every visit after that goes straight to your time card.
   let subscribedOnce = false;
-  setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+  // Persistence must be applied BEFORE the first sign-in call, or the session
+  // can land in memory-only storage and be gone by the next morning — exactly
+  // the daily re-login we're getting rid of. IndexedDB survives longer than
+  // localStorage on iOS, so try it first and fall back.
+  const persistenceReady = setPersistence(auth, indexedDBLocalPersistence)
+    .catch(() => setPersistence(auth, browserLocalPersistence))
+    .catch(() => {});
+
+  // The picker has to render before Firestore is readable, so it uses the
+  // roster cached on the last visit, falling back to the built-in crew list.
+  function rosterNames() {
+    let names = [];
+    try { names = JSON.parse(localStorage.getItem(LS_ROSTER) || "[]"); } catch (e) {}
+    if (!Array.isArray(names) || !names.length) names = DEFAULT_CREW.map(c => c.name);
+    Object.keys(NAME_TO_EMAIL).forEach(n => { if (names.indexOf(n) === -1) names.push(n); });
+    return names;
+  }
+
+  function showScreen(which) {
+    document.getElementById("bootWrap").style.display = which === "boot" ? "" : "none";
+    document.getElementById("authWrap").style.display = which === "auth" ? "" : "none";
+    document.getElementById("appWrap").style.display = which === "app" ? "" : "none";
+  }
+
+  // needPassword is false for the "wrong name on this device" case: already
+  // signed in, so only the name needs re-picking.
+  let authNeedsPassword = true;
+  function showNamePicker(needPassword) {
+    authNeedsPassword = needPassword;
+    document.getElementById("authName").innerHTML = rosterNames().map(n =>
+      '<option value="' + escapeHtml(n) + '"' + (n === currentUserName ? " selected" : "") + '>' + escapeHtml(n) + '</option>'
+    ).join("");
+    document.getElementById("authPasswordRow").style.display = needPassword ? "" : "none";
+    document.getElementById("authFooter").style.display = needPassword ? "" : "none";
+    document.getElementById("authHeading").textContent = needPassword ? "Who are you?" : "Whose time card?";
+    document.getElementById("authIntro").textContent = needPassword
+      ? "One-time setup on this device. After this it opens straight to your own time card."
+      : "Pick whose time card this device should open to.";
+    document.getElementById("authSubmit").textContent = needPassword ? "Save & continue" : "Save";
+    document.getElementById("authError").style.display = "none";
+    showScreen("auth");
+  }
+
+  function setCurrentUserName(name) {
+    currentUserName = name || "";
+    try { localStorage.setItem(LS_NAME, currentUserName); } catch (e) {}
+  }
+
+  function showApp(user) {
+    document.getElementById("userBar").innerHTML =
+      (currentUserName
+        ? "Time card for <strong>" + escapeHtml(currentUserName) + "</strong>"
+        : "Signed in as " + escapeHtml(user.email || "")) +
+      ' · <a href="#" id="switchNameLink">Not you?</a>';
+    const switchLink = document.getElementById("switchNameLink");
+    if (switchLink) switchLink.onclick = (e) => { e.preventDefault(); showNamePicker(false); };
+    showScreen("app");
+    if (!subscribedOnce) {
+      subscribedOnce = true;
+      db = makeDbShim();
+      subscribeAll();
+    }
+    initUser(user);
+  }
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById("authWrap").style.display = "none";
-      document.getElementById("appWrap").style.display = "";
-      document.getElementById("userBar").innerHTML =
-        "Signed in as " + escapeHtml(user.email) + ' · <a href="#" id="signOutLink">Sign out</a>';
-      const signOutLink = document.getElementById("signOutLink");
-      if (signOutLink) signOutLink.onclick = (e) => { e.preventDefault(); signOut(auth); };
-      if (!subscribedOnce) {
-        subscribedOnce = true;
-        db = makeDbShim();
-        subscribeAll();
-      }
-      initUser(user);
-    } else {
-      document.getElementById("authWrap").style.display = "";
-      document.getElementById("appWrap").style.display = "none";
-    }
+    if (!user) { showNamePicker(true); return; }
+    // Signed in from a previous visit, but no name stored yet (fresh install,
+    // or someone cleared it) — ask for the name only, never the password.
+    if (!currentUserName) { showNamePicker(false); return; }
+    showApp(user);
   });
 
-  function doSignIn() {
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value;
+  async function doSignIn() {
+    const name = document.getElementById("authName").value;
     const errEl = document.getElementById("authError");
     errEl.style.display = "none";
-    signInWithEmailAndPassword(auth, email, password).catch(() => {
-      errEl.textContent = "Couldn't sign in — check your email and password.";
+    if (!name) { errEl.textContent = "Pick your name."; errEl.style.display = ""; return; }
+
+    // Already authenticated: nothing to sign in to, just remember the name.
+    if (!authNeedsPassword) {
+      setCurrentUserName(name);
+      if (auth.currentUser) showApp(auth.currentUser);
+      return;
+    }
+
+    const btn = document.getElementById("authSubmit");
+    const password = document.getElementById("authPassword").value;
+    btn.disabled = true;
+    try {
+      await persistenceReady;
+      await signInWithEmailAndPassword(auth, emailForName(name), password);
+      setCurrentUserName(name);
+    } catch (e) {
+      errEl.textContent = "Couldn\u2019t sign in — check the password and try again.";
       errEl.style.display = "";
-    });
+    } finally {
+      btn.disabled = false;
+    }
   }
   document.getElementById("authSubmit").onclick = doSignIn;
   document.getElementById("authPassword").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
-  document.getElementById("authEmail").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("authPassword").focus(); });
+
+  // Deliberately kept off the main screen and out of the header: signing out
+  // is the one action that forces someone to type a password again.
+  function doSignOut() {
+    if (!confirm("Sign out of this device? Getting back in needs the shop password.")) return;
+    setCurrentUserName("");
+    signOut(auth).catch(() => {});
+  }
 })();
 </script>
 </body>
