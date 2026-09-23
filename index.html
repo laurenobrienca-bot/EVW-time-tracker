@@ -191,6 +191,12 @@
   .parts-row { display: grid; grid-template-columns: 1fr 90px 90px 32px; gap: 6px; align-items: center; margin-top: 6px; }
   .parts-row input { padding: 6px 8px; font-size: 0.84rem; }
   .x-btn { background: none; border: none; color: var(--text-dim); font-size: 1.1rem; cursor: pointer; line-height: 1; }
+  details.archived > summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 8px; }
+  details.archived > summary::-webkit-details-marker { display: none; }
+  details.archived > summary::before { content: "\25B8"; color: var(--text-dim); transition: transform 0.15s; }
+  details.archived[open] > summary::before { transform: rotate(90deg); }
+  details.archived[open] > summary { margin-bottom: 10px; }
+  tr.archived-row td { color: var(--text-dim); }
   ::-webkit-scrollbar { height: 6px; }
 </style>
 </head>
@@ -517,6 +523,10 @@
     return { partsCost: cost, price, estHours, laborCost, totalCost, margin, marginPct: price ? margin / price : NaN };
   }
 
+  // Finished jobs get archived rather than deleted, so their hours and
+  // margins stay on record but they drop out of the crew's pickers.
+  function activeJobs() { return state.jobs.filter(j => !j.archived); }
+
   function jobActuals(jobId) {
     const logs = state.timelogs.filter(t => t.jobId === jobId);
     let hours = 0, cost = 0;
@@ -566,7 +576,7 @@
 
   // ---------- Time Log tab ----------
   function renderLog() {
-    const jobOptions = state.jobs.map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
+    const jobOptions = activeJobs().map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
     const crewOptions = state.crew.filter(c => c.active !== false).map(c =>
       '<option value="' + escapeHtml(c.name) + '"' + (c.name === currentUserName ? " selected" : "") + '>' + escapeHtml(c.name) + '</option>'
     ).join("");
@@ -725,20 +735,30 @@
       '<span class="chip" data-acc-chip="' + a.id + '">' + escapeHtml(a.name) + ' (' + fmt$(a.price) + ')</span>'
     ).join("");
 
-    const jobRows = state.jobs.map(j => {
+    const jobRow = (j) => {
       const t = jobTotals(j);
       const act = jobActuals(j.id);
       const actMarginPct = t.price ? (t.price - t.partsCost - act.cost) / t.price : NaN;
-      return '<tr>' +
+      const actions = isAdmin
+        ? (j.archived
+            ? '<button class="btn secondary tiny" data-restore-job="' + j.id + '">Restore</button> '
+            : '<button class="btn secondary tiny" data-archive-job="' + j.id + '">Archive</button> ') +
+          '<button class="x-btn" data-del-job="' + j.id + '">✕</button>'
+        : '';
+      return '<tr' + (j.archived ? ' class="archived-row"' : '') + '>' +
         '<td>' + escapeHtml(j.name) + '<div class="muted">' + escapeHtml((state.models.find(m=>m.id===j.modelId)||{}).name || "") + '</div></td>' +
         '<td class="num">' + fmt$(t.price) + '</td>' +
         '<td class="num">' + fmtPct(t.marginPct) + ' <span class="muted">est</span></td>' +
         '<td class="num">' + t.estHours.toFixed(1) + '</td>' +
         '<td class="num">' + act.hours.toFixed(1) + '</td>' +
         '<td class="num ' + (actMarginPct >= t.marginPct ? "" : "") + '">' + fmtPct(actMarginPct) + ' <span class="muted">actual</span></td>' +
-        '<td>' + (isAdmin ? '<button class="x-btn" data-del-job="' + j.id + '">✕</button>' : '') + '</td>' +
+        '<td style="white-space:nowrap;">' + actions + '</td>' +
       '</tr>';
-    }).join("");
+    };
+    const jobHead = '<table><thead><tr><th>Job</th><th class="num">Quote price</th><th class="num">Est margin</th><th class="num">Est hrs</th><th class="num">Actual hrs</th><th class="num">Actual margin</th><th></th></tr></thead><tbody>';
+    const active = activeJobs();
+    const archived = state.jobs.filter(j => j.archived);
+    const jobRows = active.map(jobRow).join("");
 
     const createCard = isAdmin ?
       '<div class="card">' +
@@ -757,14 +777,23 @@
       '<div class="card"><h2>Vans / jobs</h2><p class="muted">Only Steve adds new van/job names, so the list stays clean — pick from it when logging hours or submitting invoices.</p></div>';
 
     return createCard +
-    '<div class="card"><h2>All jobs</h2>' +
-      (state.jobs.length
-        ? '<table><thead><tr><th>Job</th><th class="num">Quote price</th><th class="num">Est margin</th><th class="num">Est hrs</th><th class="num">Actual hrs</th><th class="num">Actual margin</th><th></th></tr></thead><tbody>' + jobRows + '</tbody></table>'
-        : '<div class="empty">No jobs yet — build one above.</div>') +
-    '</div>';
+    '<div class="card"><h2>' + (isAdmin ? 'Active jobs' : 'All jobs') + '</h2>' +
+      (active.length
+        ? jobHead + jobRows + '</tbody></table>'
+        : '<div class="empty">' + (archived.length ? 'No active jobs — every job is archived.' : 'No jobs yet — build one above.') + '</div>') +
+    '</div>' +
+    (isAdmin && archived.length
+      ? '<div class="card"><details class="archived" id="archivedJobs"' + (archivedOpen ? ' open' : '') + '>' +
+          '<summary>Archived jobs <span class="muted">(' + archived.length + ')</span></summary>' +
+          '<p class="muted">Finished jobs. Hidden from the crew\u2019s time log and invoice pickers; history and margins are kept.</p>' +
+          jobHead + archived.map(jobRow).join("") + '</tbody></table>' +
+        '</details></div>'
+      : '');
   }
 
   let estSelectedAcc = new Set();
+  // Remembered across re-renders, which happen on every Firestore update.
+  let archivedOpen = false;
 
   function updateEstSummary() {
     const modelId = document.getElementById("estModel") ? document.getElementById("estModel").value : "";
@@ -786,7 +815,7 @@
 
   function renderInvoices() {
     const crewOptions = state.crew.filter(c => c.active !== false).map(c => '<option value="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</option>').join("");
-    const jobOptions = state.jobs.map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
+    const jobOptions = activeJobs().map(j => '<option value="' + j.id + '">' + escapeHtml(j.name) + '</option>').join("");
     const lineRows = invoiceLines.map((li, i) =>
       '<div class="parts-row" style="grid-template-columns:1fr 100px 32px;">' +
         '<input value="' + escapeHtml(li.desc) + '" data-invline="' + i + '" data-field="desc" class="invline-field" placeholder="Description of work / item">' +
@@ -1025,8 +1054,16 @@
       document.getElementById("estName").value = "";
       estSelectedAcc = new Set();
     };
+    document.querySelectorAll("[data-archive-job]").forEach(b => b.onclick = () => {
+      db.doc("jobs/" + b.dataset.archiveJob).update({ archived: true, archivedAt: Date.now() }).catch(() => {});
+    });
+    document.querySelectorAll("[data-restore-job]").forEach(b => b.onclick = () => {
+      db.doc("jobs/" + b.dataset.restoreJob).update({ archived: false }).catch(() => {});
+    });
+    const archivedDetails = document.getElementById("archivedJobs");
+    if (archivedDetails) archivedDetails.ontoggle = () => { archivedOpen = archivedDetails.open; };
     document.querySelectorAll("[data-del-job]").forEach(b => b.onclick = () => {
-      if (confirm("Delete this job? Logged hours against it will stay but become unlinked.")) {
+      if (confirm("Permanently delete this job? To keep its history, use Archive instead. Logged hours against it will stay but become unlinked.")) {
         db.doc("jobs/" + b.dataset.delJob).delete().catch(() => {});
       }
     });
