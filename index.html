@@ -360,6 +360,10 @@
   let currentUserName = "";
   try { currentUserName = localStorage.getItem(LS_NAME) || ""; } catch (e) {}
   let logScope = "mine";
+  // CSV export settings live outside the DOM: every Firestore snapshot
+  // re-renders the tab, which would otherwise reset the picked range.
+  let exportRange = null;
+  let exportCrew = "";
   let state = {
     settings: { categories: DEFAULT_CATEGORIES, shopRate: 38 },
     crew: [],
@@ -622,7 +626,114 @@
           : '') +
         (recent.length ? '<table><thead><tr><th>Date</th><th>Crew</th><th>Van</th><th>Category</th><th class="num">Hrs</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
           : '<div class="empty">' + (mineOnly ? "You haven\u2019t logged any hours yet." : "No hours logged yet.") + '</div>') +
-      '</div>';
+      '</div>' +
+      renderExport();
+  }
+
+  // ---------- CSV export ----------
+  // Preset ranges as [from, to] local ISO dates, inclusive.
+  function exportPresets() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(today);
+    weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7)); // back to Monday
+    const lastWeekStart = new Date(weekStart); lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(weekStart); lastWeekEnd.setDate(lastWeekEnd.getDate() - 1);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+    return [
+      { id: "thisWeek", label: "This week", from: isoLocal(weekStart), to: isoLocal(today) },
+      { id: "lastWeek", label: "Last week", from: isoLocal(lastWeekStart), to: isoLocal(lastWeekEnd) },
+      { id: "thisMonth", label: "This month", from: isoLocal(monthStart), to: isoLocal(today) },
+      { id: "lastMonth", label: "Last month", from: isoLocal(lastMonthStart), to: isoLocal(lastMonthEnd) },
+      { id: "thisYear", label: "This year", from: isoLocal(yearStart), to: isoLocal(today) }
+    ];
+  }
+
+  function renderExport() {
+    const presets = exportPresets();
+    if (!exportRange) exportRange = { from: presets[0].from, to: presets[0].to };
+    const chips = presets.map(p =>
+      '<span class="chip' + (p.from === exportRange.from && p.to === exportRange.to ? " selected" : "") + '" data-export-preset="' + p.id + '">' + p.label + '</span>'
+    ).join("");
+    const crewOptions = '<option value="">Whole crew</option>' + state.crew.map(c =>
+      '<option value="' + escapeHtml(c.name) + '"' + (c.name === exportCrew ? " selected" : "") + '>' + escapeHtml(c.name) + '</option>'
+    ).join("");
+    return '<div class="card">' +
+      '<h2>Export to CSV</h2>' +
+      '<div class="badge-row" style="margin-top:-4px;">' + chips + '</div>' +
+      '<div class="row">' +
+        '<div><label>From</label><input id="exportFrom" type="date" value="' + exportRange.from + '"></div>' +
+        '<div><label>To</label><input id="exportTo" type="date" value="' + exportRange.to + '"></div>' +
+      '</div>' +
+      '<div class="row">' +
+        '<div><label>Crew member</label><select id="exportCrew">' + crewOptions + '</select></div>' +
+      '</div>' +
+      '<button class="btn" id="exportCsv">⬇ Download CSV</button>' +
+    '</div>';
+  }
+
+  function csvCell(v) {
+    const s = String(v == null ? "" : v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  async function exportCsv() {
+    const from = exportRange.from, to = exportRange.to;
+    if (!from || !to) { alert("Pick both a start and end date."); return; }
+    if (from > to) { alert("The start date is after the end date."); return; }
+    const btn = document.getElementById("exportCsv");
+    if (btn) { btn.disabled = true; btn.textContent = "Preparing…"; }
+    // Fetch the full collection rather than using state.timelogs, which is
+    // capped at the 500 most recent entries for the live view.
+    let logs;
+    try {
+      const snap = await db.collection("timelogs").get();
+      logs = (snap.docs || []).map(d => Object.assign({ id: d.id }, d.data));
+    } catch (e) {
+      logs = state.timelogs;
+    }
+    if (btn) { btn.disabled = false; btn.textContent = "⬇ Download CSV"; }
+    logs = logs.filter(l => (l.date || "") >= from && (l.date || "") <= to && (!exportCrew || l.crewName === exportCrew));
+    if (!logs.length) { alert("No hours logged in that period."); return; }
+    logs.sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.createdAt || 0) - (b.createdAt || 0));
+
+    // Rates are admin-only, so the cost columns only appear for Steve.
+    const header = ["Date", "Crew", "Van / job", "Category", "Hours", "Notes"];
+    if (isAdmin) header.push("Rate", "Labor cost");
+    let totalHours = 0, totalCost = 0;
+    const lines = [header.map(csvCell).join(",")];
+    logs.forEach(l => {
+      const job = state.jobs.find(j => j.id === l.jobId);
+      const hours = Number(l.hours) || 0;
+      totalHours += hours;
+      const row = [l.date || "", l.crewName || "", job ? job.name : (l.jobName || ""), l.category || "", hours, l.notes || ""];
+      if (isAdmin) {
+        const crew = state.crew.find(c => c.name === l.crewName);
+        const rate = crew && Object.prototype.hasOwnProperty.call(state.rates, crew.id)
+          ? (Number(state.rates[crew.id]) || 0)
+          : (Number(state.settings.shopRate) || 0);
+        totalCost += hours * rate;
+        row.push(rate, (hours * rate).toFixed(2));
+      }
+      lines.push(row.map(csvCell).join(","));
+    });
+    const totalRow = ["Total", "", "", "", Math.round(totalHours * 100) / 100, ""];
+    if (isAdmin) totalRow.push("", totalCost.toFixed(2));
+    lines.push(totalRow.map(csvCell).join(","));
+
+    // Leading BOM so Excel opens it as UTF-8 (names, em dashes, etc.).
+    const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const who = exportCrew ? "-" + exportCrew.replace(/[^A-Za-z0-9]+/g, "-") : "";
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "evw-hours" + who + "-" + from + "-to-" + to + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
   // Running totals for whoever owns this device — the "time card" they land
@@ -953,6 +1064,20 @@
       document.getElementById("logHours").value = "";
       document.getElementById("logNotes").value = "";
     };
+    document.querySelectorAll("[data-export-preset]").forEach(el => {
+      el.onclick = () => {
+        const p = exportPresets().find(x => x.id === el.dataset.exportPreset);
+        if (p) { exportRange = { from: p.from, to: p.to }; render(); }
+      };
+    });
+    const exportFrom = document.getElementById("exportFrom");
+    if (exportFrom) exportFrom.onchange = () => { exportRange.from = exportFrom.value; render(); };
+    const exportTo = document.getElementById("exportTo");
+    if (exportTo) exportTo.onchange = () => { exportRange.to = exportTo.value; render(); };
+    const exportCrewSel = document.getElementById("exportCrew");
+    if (exportCrewSel) exportCrewSel.onchange = () => { exportCrew = exportCrewSel.value; };
+    const exportBtn = document.getElementById("exportCsv");
+    if (exportBtn) exportBtn.onclick = exportCsv;
     document.querySelectorAll("[data-del-log]").forEach(b => b.onclick = () => {
       db.doc("timelogs/" + b.dataset.delLog).delete().catch(() => {});
     });
